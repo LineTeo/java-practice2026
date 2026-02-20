@@ -5,6 +5,7 @@ package war.main;
 
 import java.util.ArrayList;
 
+import war.main.old.TankAI;
 import war.tank.Tank;
 
 /**

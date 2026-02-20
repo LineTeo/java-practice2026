@@ -1,4 +1,4 @@
-package war.main;//パッケージ演習3
+package war.main.old;//パッケージ演習3
 
 import java.util.Random;
 

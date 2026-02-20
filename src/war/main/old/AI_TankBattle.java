@@ -1,4 +1,4 @@
-package war.main;
+package war.main.old;
 
 import java.awt.Color;
 import java.awt.Dimension;
