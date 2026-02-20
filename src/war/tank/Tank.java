@@ -184,9 +184,20 @@ public abstract class Tank {
     // 修理メソッド
     public int repair() {
         if (!this.isAlive ) return -1;
-        int amount = this.activePoint / REP_CST * this.maxHp / 2;
-        this.hp = Math.min(this.maxHp, this.hp + amount);
+        
+        /* 修理関数 
+         * 残行動力をすべて使ってHPを回復する
+         * 最大行動力（＝最大修理コストREP_CST)で修理したときに50％回復する設計
+         * */
+        double amount = (double)this.activePoint / REP_CST * this.maxHp / 2;
+
+        // 修理後のhpがmaxHpを超えないように回復
+        this.hp = (int)Math.min(this.maxHp, this.hp + amount);
+        
+        //経過メッセージ（デバッグ用）
         System.out.println(this.name + "を修理！（HP: " + this.hp + "/" + this.maxHp + "）");
+        
+        //行動力は全部消費
         this.activePoint = 0;
         return 0;
     }
