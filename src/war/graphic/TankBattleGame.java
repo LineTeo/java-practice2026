@@ -1,12 +1,21 @@
-package war.main;
+package war.graphic;
 
 //======================================================================
-// TankBattleGame.java - 戦車バトルゲームのメインクラス（リファクタリング版）
+// TankBattleGame.java - 戦車バトルゲームのメインクラス（完全リファクタリング版）
 //======================================================================
-// 変更点:
-//   - 描画処理 → TankRenderer クラスへ完全移管
-//   - 敵AI処理 → EnemyAI クラスへ完全移管
-//   - このクラスはController（入力受付・ゲームフロー制御）に集中
+// 変更履歴:
+//   v1: 描画処理 → TankRenderer へ移管
+//   v2: 敵AI処理 → EnemyAI へ移管
+//   v3: プレイヤー操作 → PlayerController へ移管 ★NEW
+//
+// このクラスの責務:
+//   - ゲームフロー制御（初期化、ターン管理、勝敗判定）
+//   - 各コンポーネント（Renderer, PlayerController, EnemyAI）の統合
+//   - イベントリスナーの登録・委譲
+//
+// 将来的な拡張:
+//   PlayerController → PlayerAI に差し替えることで、
+//   プレイヤー側も自動操作に切り替え可能。
 //======================================================================
 
 import java.awt.Color;
@@ -26,17 +35,15 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import war.ai.EnemyAI;
-import war.graphic.TankRenderer;
+import war.control.PlayerController;
 import war.tank.HeavyTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
 import war.tank.Tiger;
 
 /**
- * TankBattleGame クラス (Controller + エントリーポイント)
- * - キーボード / マウス入力を受け付ける
- * - ゲームの進行フロー（ターン管理・勝敗判定）を制御する
- * - 描画は TankRenderer、敵AI判断は EnemyAI に委譲する
+ * TankBattleGame クラス (ゲームフロー制御 + エントリーポイント)
+ * 各責務を専門クラスに委譲し、ゲーム進行のみを管理する。
  */
 public class TankBattleGame extends JPanel implements KeyListener, MouseListener {
 
@@ -60,16 +67,16 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     /** 全戦車リスト */
     private ArrayList<Tank> tanks;
 
-    /** 選択中（プレイヤー操作）の戦車 */
-    private Tank selectedTank;
-
     /** 選択中戦車のインデックス */
     private int selectedIndex = 0;
 
-    /** 描画担当オブジェクト（旧: 各 draw〜メソッド） */
+    /** 描画担当（View） */
     private final TankRenderer renderer;
 
-    /** 敵AI担当オブジェクト（旧: enemyTank / assaultAction 等） */
+    /** プレイヤー操作担当（Controller） */
+    private final PlayerController playerController;
+
+    /** 敵AI担当 */
     private final EnemyAI enemyAI;
 
     // ======================================================================
@@ -83,12 +90,16 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         addMouseListener(this);
         setBackground(new Color(240, 240, 220));
 
-        renderer = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
-        enemyAI  = new EnemyAI(GRID_SIZE - 1);
+        // 各コンポーネントを生成
+        renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
+        playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
+        enemyAI          = new EnemyAI(GRID_SIZE - 1);
 
         tanks = new ArrayList<>();
         startGame();
-        selectedTank = tanks.get(0);
+
+        // プレイヤー戦車を PlayerController に設定
+        playerController.setControlledTank(tanks.get(0));
     }
 
     // ======================================================================
@@ -117,59 +128,53 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
         renderer.drawGrid(g2d);
         renderer.drawAllTanks(g2d, tanks, selectedIndex);
-        renderer.drawInfoPanel(g2d, selectedTank, INFO_HEIGHT);
+        renderer.drawInfoPanel(g2d, playerController.getControlledTank(), INFO_HEIGHT);
     }
 
     // ======================================================================
-    // キーボード入力
+    // キーボード入力 — PlayerController へ委譲
     // ======================================================================
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (selectedTank == null || !selectedTank.isAlive()) return;
-
         int key = e.getKeyCode();
-        switch (key) {
-            case KeyEvent.VK_UP:
-                setDirection(selectedTank, "VK_UP");
-                if (selectedTank.getY() > 0)
-                    selectedTank.move(selectedTank.getX(), selectedTank.getY() - 1);
-                break;
-            case KeyEvent.VK_DOWN:
-                setDirection(selectedTank, "VK_DOWN");
-                if (selectedTank.getY() < GRID_SIZE - 1)
-                    selectedTank.move(selectedTank.getX(), selectedTank.getY() + 1);
-                break;
-            case KeyEvent.VK_LEFT:
-                setDirection(selectedTank, "VK_LEFT");
-                if (selectedTank.getX() > 0)
-                    selectedTank.move(selectedTank.getX() - 1, selectedTank.getY());
-                break;
-            case KeyEvent.VK_RIGHT:
-                setDirection(selectedTank, "VK_RIGHT");
-                if (selectedTank.getX() < GRID_SIZE - 1)
-                    selectedTank.move(selectedTank.getX() + 1, selectedTank.getY());
-                break;
-            case KeyEvent.VK_SPACE:
-                endPlayerTurn();
-                break;
-            case KeyEvent.VK_R:
-                selectedTank.repair();
-                break;
-            case KeyEvent.VK_A:
-                selectedTank.reloadAmmo(10);
-                break;
-            case KeyEvent.VK_Z:
-                selectedTank.reloadAmmo(10);
-                break;
+
+        // スペースキー: ターン終了
+        if (key == KeyEvent.VK_SPACE) {
+            endPlayerTurn();
+            return;
         }
 
-        repaint();
-        System.out.println("残行動力 " + selectedTank.activity());
+        // それ以外のキー入力を PlayerController に委譲
+        boolean handled = playerController.handleKeyInput(key);
+
+        if (handled) {
+            repaint();
+        }
     }
 
     // ======================================================================
-    // ターン終了 → 敵AI処理 — EnemyAI へ委譲
+    // マウス入力 — PlayerController へ委譲
+    // ======================================================================
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        boolean handled = playerController.handleMouseClick(
+            e.getX(), e.getY(), tanks);
+
+        if (handled) {
+            repaint();
+            // 攻撃後に勝敗判定
+            if (gameEndChk() == 1) {
+                selectedIndex = 0;
+                playerController.setControlledTank(tanks.get(selectedIndex));
+                tanks.get(selectedIndex).resetAct();
+            }
+        }
+    }
+
+    // ======================================================================
+    // ターン終了 → 敵AI処理
     // ======================================================================
 
     /**
@@ -183,11 +188,12 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
         ArrayList<Tank> friendlies = getFriendlyTanks();
 
+        // 敵戦車を順に行動させる
         for (int i = 1; i < tanks.size(); i++) {
             Tank enemy = tanks.get(i);
             if (!enemy.isAlive()) continue;
 
-            enemyAI.takeTurn(enemy, friendlies);  // EnemyAI に行動を委譲
+            enemyAI.takeTurn(enemy, friendlies);
             enemy.resetAct();
             repaint();
 
@@ -203,51 +209,15 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
         // プレイヤーターン開始
         selectedIndex = 0;
-        selectedTank  = tanks.get(selectedIndex);
-        selectedTank.resetAct();
+        Tank playerTank = tanks.get(selectedIndex);
+        playerTank.resetAct();
+        playerController.setControlledTank(playerTank);
         repaint();
-    }
-
-    // ======================================================================
-    // マウス入力（攻撃）
-    // ======================================================================
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if (selectedTank == null || !selectedTank.isAlive()) return;
-
-        int gridX = e.getX() / CELL_SIZE;
-        int gridY = e.getY() / CELL_SIZE;
-
-        for (Tank target : tanks) {
-            if (target == selectedTank || !target.isAlive()) continue;
-            if ((int) target.getX() == gridX && (int) target.getY() == gridY) {
-                selectedTank.attackTarget(target);
-                repaint();
-                if (gameEndChk() == 1) {
-                    selectedIndex = 0;
-                    selectedTank  = tanks.get(selectedIndex);
-                    selectedTank.resetAct();
-                }
-                return;
-            }
-        }
     }
 
     // ======================================================================
     // ヘルパーメソッド
     // ======================================================================
-
-    /** 矢印キーに対応する砲塔の向きを設定する */
-    private void setDirection(Tank tank, String dir) {
-        double cr = tank.getAngle();
-        switch (dir) {
-            case "VK_UP":    tank.rotate(360 - cr); break;
-            case "VK_RIGHT": tank.rotate( 90 - cr); break;
-            case "VK_DOWN":  tank.rotate(180 - cr); break;
-            case "VK_LEFT":  tank.rotate(270 - cr); break;
-        }
-    }
 
     /** 生存中の味方戦車リストを返す（EnemyAI に渡すため） */
     private ArrayList<Tank> getFriendlyTanks() {
@@ -278,7 +248,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
             if (result == 0) {
                 startGame();
-                selectedTank = tanks.get(0);
+                playerController.setControlledTank(tanks.get(0));
                 repaint();
                 requestFocusInWindow();
             } else {
