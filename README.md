@@ -50,4 +50,5 @@ AIクラスと差し替え可能な構成にする
 ## 進め方
 
 - 基本的に仕様等の文書やAIとの相談ログ、レビュー結果はNotionで作成・管理
+  - https://www.notion.so/JAVA-Python-30b1ec7d218480518ea8cc87d8d3570f?source=copy_link
 - 仕様作成→AIとレビュー→AIによるコーディング→人による修正→AIとレビューというワークフローで開発を進める
