@@ -2,8 +2,8 @@ package war.tank;
 
 public class Sherman2  extends Sherman {
 
-	public Sherman2(String name, double x, double y) {
-		super(name, x, y);
+	public Sherman2(String name,int jinei, double x, double y) {
+		super(name, jinei, x, y);
 		this.setMaxHp(100);
 	}
 
