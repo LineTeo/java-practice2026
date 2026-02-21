@@ -1,4 +1,5 @@
 package war.ai;
+//脅威評価パラメータ
 
 public class AIConfig {
     // ========================================
@@ -45,5 +46,5 @@ public class AIConfig {
     // ========================================
     public int MOVE_COST = 1;                        // 移動1マスのコスト
     public int ATTACK_COST = 4;                      // 攻撃のコスト
-    public int REPAIR_COST_PER_TURN = 8;             // 修理（全行動力消費）
+    public int REPAIR_COST_PER_TURN = 8;             // 修理コスト最大値（残行動力に比例して修理）
 }
