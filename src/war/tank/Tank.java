@@ -22,21 +22,6 @@ public abstract class Tank {
     private long serialNo;		 // インスタンスID
 
     
-    /*　Publicメソッド一覧
-     * 
-     * 	atackTarget(Tank)	引数に指定されたTankインスタンスに与えるダメージを求め、
-     * 						その量を、指定インスタンスのhpからtakeDamegeメソッドで減らす
-     * 
-     *  tegeDamege(int)		引数を自身のhpから差し引く
-     * 
-     *  move()		移動メソッド
-     *  rotate()	回転メソッド
-     *  repair()	修理メソッド
-     *  弾薬補給メソッド
-     *  get+先頭を大文字にした属性名　それぞれの属性を返すメソッド
-     * 
-     */
-    
     //　行動力関連定数群
     final private int MAX_ACT = 8;	//最大行動力
     protected int REP_CST = 8;	//攻撃時消費行動力

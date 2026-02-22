@@ -16,7 +16,6 @@ package war.control;
 //======================================================================
 
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import war.tank.Tank;
