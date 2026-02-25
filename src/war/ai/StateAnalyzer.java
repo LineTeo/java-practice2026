@@ -92,21 +92,22 @@ public class StateAnalyzer {
     }
     
     /**
-     * 相手戦車(b)が自分(a)に対してどの方向を向いているかを返す（度）
-     * 座標系: Yマイナス方向（12時）が0度、時計回りが正
-     * 返り値:   0 → 相手がこちらを正面に向いている
-     *         180 → 相手がこちらにお尻を向けている
+     * 自分(self)がtarget戦車からみてどっちの方向にいるかを返す（0-360度）。
+     * つまり自分が撃てばターゲットのどこに当たるかを示す。
+     * 正面が0（度）で、時計回りに真後ろが180度
      */
-    private double calcAngle(Tank a, Tank b) {
+    private double calcAngle(Tank target, Tank self) {
         // b から a への方向角度（deg、12時=0、時計回り正）
-        double dx = a.getX() - b.getX();
-        double dy = a.getY() - b.getY();
-        double dirToA = Math.toDegrees(Math.atan2(dx, -dy));
+        double dx = self.getX() - target.getX();
+        double dy = self.getY() - target.getY();
+        double dirToA = Math.toDegrees(Math.atan2(dx, -dy)) + 180; // atan2は0除算を防げる。dx=0もうまく処理する
 
-        // 相手の正面方向との差分（-180〜180 に正規化）
-        double diff = b.getAngle() - dirToA;
-        while (diff >  180.0) diff -= 360.0;
-        while (diff < -180.0) diff += 360.0;
+        target.rotate(45);
+
+        double diff =  dirToA-target.getAngle() ;
+
+        while (diff >=  360.0) diff -= 360.0;
+        while (diff < 0.0) diff += 360.0;
         return diff;
     }
     
@@ -131,7 +132,7 @@ public class StateAnalyzer {
         int rank = 1;
 
         for (Tank ally : allies) {
-            if (!ally.isAlive()) {
+            if (ally.isAlive()) {
                 double allyDist = calcDistance(ally, target);
                 if (allyDist < selfDist) {
                     rank++;
