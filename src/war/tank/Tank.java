@@ -8,7 +8,7 @@ public abstract class Tank {
     private int hp;              // 体力
     private int maxHp;           // 最大体力
     private int attack;          // 攻撃力
-    private int MAX_RNG;	//移動、回転消費行動力
+    private int MAX_RNG;		//　最大射程
     private int defense;         // 防御力
     private double speed;           // 速度    
     private double x, y;         // 位置座標
@@ -260,7 +260,7 @@ public abstract class Tank {
 	}
 	
 
-	private boolean meichu(Tank target) {					//標準命中判定
+	private boolean meichu2(Tank target) {					//標準命中判定 旧版
 //		double k=(1-1/Math.pow((21-distanceSQ(target)),0.1))*(1-1/Math.pow(21, 0.1))+Math.random();
 		final double K =(1-1/Math.pow(MAX_RNG, 0.1));
 				
@@ -273,6 +273,38 @@ public abstract class Tank {
 			return false;
 		}
 	}
+	
+	private boolean meichu(Tank target) {					//新版　命中判定
+	     
+		final int HITCHU = 4;								//必中距離
+		
+		double D = distance(target);						//敵との距離
+		double p;
+	    
+		// xが0以下の場合はTrue、xがL以上の場合はfalseを返す（範囲外の制御）
+	    if (D <= HITCHU) {
+	    	p =  2.0;
+	    } else  if(D >= MAX_RNG) {
+	    	p = -1.0;
+		} else {
+			p = 0.5 * (Math.cos((Math.PI / (MAX_RNG-HITCHU)) * (D-HITCHU)) + 1.0) ;
+		}
+		/**
+	     * コサイン曲線を用いた0.0 から 1.0 の間の減衰値曲線を利用
+	     * 式: Y = 0.5 * (cos(PI / L * X) + 1.0)
+	     * ランダム値がこの値以下なら命中
+	     * 
+	     */
+	     
+         System.out.println("命中率: " + p *100 +"%");
+	     
+         if (Math.random() <p) return true;
+		 return false;
+		 
+		 
+		}	
+	
+	
 
 	//インスタンス比較用
 	@Override

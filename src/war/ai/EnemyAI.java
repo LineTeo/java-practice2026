@@ -17,6 +17,7 @@ package war.ai;
 //======================================================================
 
 import java.util.ArrayList;
+
 import war.tank.Tank;
 
 /**
@@ -40,16 +41,16 @@ public class EnemyAI {
      * 最適射程の下限倍率（射程 × この値）。
      * これより近い場合は「近すぎ」と判断して後退する。
      */
-    private static final double OPT_RANGE_MIN = 0.60;
+    private static final double OPT_RANGE_MIN = 0.30;
 
     /**
      * 最適射程の上限倍率（射程 × この値）。
      * これより遠い場合は「遠すぎ」と判断して前進する。
      */
-    private static final double OPT_RANGE_MAX = 0.80;
+    private static final double OPT_RANGE_MAX = 0.60;
 
     /** 退避判定距離: 脅威がこの距離以内なら退避を優先する */
-    private static final double DANGER_DIST = 8.0;
+    private static final double DANGER_DIST = 4.0;
 
     /** グリッドの最大座標（端の判定に使用） */
     private final int MAX_GRID;
@@ -250,7 +251,7 @@ public class EnemyAI {
 
     /** 戦車が目標に対して有効射程内かどうかを判定する */
     private boolean isInRange(Tank enemy, Tank target) {
-        return enemy.distance(target) <= (enemy.getRange() - 1);
+        return enemy.distance(target) <= (enemy.getRange()*OPT_RANGE_MAX);
     }
 
     /** 値を [min, max] の範囲にクランプする */
