@@ -9,6 +9,7 @@ public abstract class Tank {
     private int maxHp;           // 最大体力
     private int attack;          // 攻撃力
     private int MAX_RNG;		//　最大射程
+    private int AHD;	  	    //　命中率100%の範囲    
     private int defense;         // 防御力
     private double speed;           // 速度    
     private double x, y;         // 位置座標
@@ -23,13 +24,13 @@ public abstract class Tank {
 
     
     //　行動力関連定数群
-    final private int MAX_ACT = 8;	//最大行動力
+    final private int MAX_ACT = 8;			//最大行動力
+    final private double rRate = 0.25; 		//ばらつき係数
     protected int REP_CST = 8;	//攻撃時消費行動力
     protected int ATC_CST = 4;	//攻撃時消費行動力
     protected int CHG_CST = 2;	//補給時消費行動力
     protected int MOV_CST = 1;	//移動、回転消費行動力
-    
-    
+
     
     // コンストラクタ
     public Tank(String name, int jinei, int hp, int attack, int defense, double x, double y) {
@@ -38,6 +39,7 @@ public abstract class Tank {
         this.maxHp = hp;
         this.attack = attack;
         this.MAX_RNG = 12;
+        this.AHD = 2;
         this.defense = defense;
         this.x = x;
         this.y = y;
@@ -250,13 +252,23 @@ public abstract class Tank {
 	}
 
 	private double distanceSQ(Tank target) {				//距離の二乗を返すメソッド
-		return Math.pow(target.x-this.x , 2.0) + Math.pow(target.y-this.y , 2.0);
+		double temp;
+		temp = Math.pow(target.x-this.x , 2.0) + Math.pow(target.y-this.y , 2.0);
+		return temp;
 	}
 	
 
 	private int damage(Tank target) {						//攻撃で与えるダメージ返すメソッド
 		
-		return (int)(this.attack/distanceSQ(target) *( rnd.nextInt(10)+2000));
+//		return (int)(this.attack/distanceSQ(target) *( rnd.nextInt(10)+2000));
+		
+		final double atackRange = 20.0;
+		final double baranceParam = 0.5;
+		double temp = Math.pow((atackRange - distance(target)) , 2.0) * this.attack * baranceParam;
+        System.out.println("ダメージ: " + temp);
+		
+		
+  		return (int)(temp*((1-this.rRate) + 2 * this.rRate * Math.random())); 
 	}
 	
 
@@ -274,27 +286,9 @@ public abstract class Tank {
 		}
 	}
 	
-	private boolean meichu(Tank target) {					//新版　命中判定
+	private boolean meichu(Tank target) {					//命中判定で、命中率を分割
 	     
-		final int HITCHU = 4;								//必中距離
-		
-		double D = distance(target);						//敵との距離
-		double p;
-	    
-		// xが0以下の場合はTrue、xがL以上の場合はfalseを返す（範囲外の制御）
-	    if (D <= HITCHU) {
-	    	p =  2.0;
-	    } else  if(D >= MAX_RNG) {
-	    	p = -1.0;
-		} else {
-			p = 0.5 * (Math.cos((Math.PI / (MAX_RNG-HITCHU)) * (D-HITCHU)) + 1.0) ;
-		}
-		/**
-	     * コサイン曲線を用いた0.0 から 1.0 の間の減衰値曲線を利用
-	     * 式: Y = 0.5 * (cos(PI / L * X) + 1.0)
-	     * ランダム値がこの値以下なら命中
-	     * 
-	     */
+		double p = HitRate(target);
 	     
          System.out.println("命中率: " + p *100 +"%");
 	     
@@ -304,6 +298,30 @@ public abstract class Tank {
 		 
 		}	
 	
+
+	public double HitRate(Tank target) {					//命中率のみ分割してをpublic化 
+		
+		double D = distance(target);						//敵との距離
+		double p;
+	    
+		// xが0以下の場合はTrue、xがL以上の場合はfalseを返す（範囲外の制御）
+	    if (D <= AHD) {
+	    	p =  2.0;
+	    } else  if(D >= MAX_RNG) {
+	    	p = -1.0;
+		} else {
+			p = 0.5 * (Math.cos((Math.PI / (MAX_RNG-AHD)) * (D - AHD)) + 1.0) ;
+		}
+		/**
+	     * コサイン曲線を用いた0.0 から 1.0 の間の減衰値曲線を利用
+	     * 式: Y = 0.5 * (cos(PI / L * X) + 1.0)
+	     * ランダム値がこの値以下なら命中
+	     * 
+	     */
+	     
+		 return p;
+		 
+		}	
 	
 
 	//インスタンス比較用
