@@ -3,7 +3,7 @@ package war.tank;
 public class HeavyTank extends Tank {
  
  public HeavyTank(String name, int jinei,  double x, double y) {
-     super(name, jinei, 2500, 11, 15, x, y);
+     super(name, jinei, 2500, 7, 15, x, y);
      typeName();
  }
  

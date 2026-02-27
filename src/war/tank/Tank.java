@@ -292,7 +292,7 @@ public abstract class Tank {
 	     
          System.out.println("命中率: " + p *100 +"%");
 	     
-         if (Math.random() <p) return true;
+         if (Math.random() < p) return true;
 		 return false;
 		 
 		 
