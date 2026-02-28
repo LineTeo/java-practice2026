@@ -113,6 +113,8 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
         tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
         selectedIndex = 0;
+        
+        
     }
 
     // ======================================================================

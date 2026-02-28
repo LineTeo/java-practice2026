@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import war.control.PlayerController;
+import war.tank.DummyTank;
 import war.tank.HeavyTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
@@ -35,7 +36,9 @@ public class TestAi {
 
 	    /** 敵AI担当 */
 	    final EnemyAI enemyAI = new EnemyAI(19);;
-		
+	    
+	    
+		DummyTank dummy = new DummyTank();
 
 		
         tanks.clear();
@@ -61,22 +64,43 @@ public class TestAi {
         
 	    comTanks.clear();
 	    comTanks.addAll(List.of(tanks.get(1), tanks.get(2), tanks.get(3)));
+	    
+	    final Tank player = tanks.get(0);
+	    
 	    plyTanks.clear();
-	    plyTanks.add(tanks.get(0));
+	    plyTanks.add(player);
 	    
         BattleState BS;
         AIConfig aiConfig = new AIConfig();
         ThreatEvaluator d = new ThreatEvaluator(aiConfig);
 
         for(int i = 1 ; i < 9 ; i++) {
-        	BS = stat.analyze(tanks.get(i), tanks.get(0), comTanks, plyTanks, 1) ;
+//        	BS = stat.analyze(tanks.get(i), player , comTanks, plyTanks, 1) ;
 //        	System.out.println(BS.toString());
-        	System.out.printf("脅威値 = %.1f, 機会値 = %.1f%n", d.calcThreat(BS), d.calcOpportunity(BS));
+//        	System.out.printf("脅威値 = %.1f, 機会値 = %.1f ", d.calcThreat(BS), d.calcOpportunity(BS));
+
+        	System.out.printf("距離 = %.1f, ",tanks.get(i).distance(player));
+        	
+            System.out.printf("AC2 = %.1f, ",d.calcAC(ThreatEvaluator.times.doubleAction , tanks.get(i), player));
+        	dummy.setPos(tanks.get(i).getX(), tanks.get(i).getY());
+        	d.progOne(dummy , player.getX() , player.getY());
+        	System.out.printf("距離 = %.1f, ",dummy.distance(player));
+        	System.out.printf("AT1 = %.1f%n",d.calcAC(ThreatEvaluator.times.singleAction , dummy, player));
         	
         }
         
         
-
+        
+        //ダミーシミュレーション
+        dummy.setPos(1, 1);
+    	System.out.printf("x = %.1f, y = %.1f%n", dummy.getX(), dummy.getY());
+    	
+    	d.progOne(dummy , player.getX() , player.getY());
+		System.out.printf("D = %.1f%n" , dummy.distance(player));
+		d.progOne(dummy , player.getX() , player.getY());
+		System.out.printf("D = %.1f%n" , dummy.distance(player));
+   	
+		
 	}
 
 }

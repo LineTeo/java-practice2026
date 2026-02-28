@@ -197,10 +197,7 @@ public abstract class Tank {
         this.activePoint -= CHG_CST;
         return 0;
     }
-    
-	
-	
-    
+      
 
     // ゲッター
     public String getName() { return name; }
@@ -227,6 +224,10 @@ public abstract class Tank {
     protected void setMaxHp(int n) {maxHp = n; return; }
     protected void setAttack(int n) { attack = n; return ; }
     protected void setDefense(int n) { defense = n; return; }
+    protected void setXY(double x,double y) {
+    	this.x = x;
+    	this.y = y;   	
+    	return; }
     public void setType(String n) { modelType = n; return; }
     public void resetAct() { activePoint = MAX_ACT; return;  }
 

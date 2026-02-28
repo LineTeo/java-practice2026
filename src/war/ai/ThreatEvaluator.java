@@ -137,6 +137,29 @@ public class ThreatEvaluator {
         singleAction,doubleAction ;
     }
 
+    
+    // ========================================
+    // 判断パラメーター算出
+    // ========================================
+    
+    //　ラッパー
+    public double calcAC(times times , Tank self , Tank target) {
+    	return getParam(times , self , target);
+    }
+    
+    public double calcDC(times times , Tank self , Tank target) {
+    	return getParam(times , target , self);
+    }
+    public double calcAT(times times , Tank dummy , Tank target) {
+
+    	return getParam(times , dummy , target);
+    }
+    public double calcDT(times times , Tank dummy , Tank target) {
+    	return getParam(times , target , dummy);
+    }
+    
+    //　本体
+    
     public double getParam(times times, Tank offence, Tank deffence) {
     /*
     *　  　　　offence   deffenc  
@@ -146,9 +169,9 @@ public class ThreatEvaluator {
     *  DT 　　 target    selfSIM  
     */
 
-        double damageRng = offence.normalDamage(deffence) * offence.getRrate();
+        double damageRng = offence.normalDamage(deffence) * 2 * offence.getRrate();
     	double damageMax = offence.normalDamage(deffence) + damageRng / 2;
-    	double damageMin = offence.normalDamage(deffence) - damageRng / 2;;
+    	double damageMin = offence.normalDamage(deffence) - damageRng / 2;
 
     	double HP = deffence.getHp();
         
@@ -171,7 +194,7 @@ public class ThreatEvaluator {
             case doubleAction:
                 // 2発で倒す可能性(1発で倒す可能性も含む
 
-            	if( HP < damageMin*2) {
+            	if( HP > damageMin*2) {
             		getResult= doubleResponce(HP-damageMin,damageRng);
 
             	} else {
@@ -217,12 +240,23 @@ public class ThreatEvaluator {
             double upperTriangleArea = Math.pow(upperTriangleSide, 2) / 2.0;
             prob = upperTriangleArea / totalArea;
         }
-
-        return prob;
+        return prob; 
     }
 
-
-
+    
+    /**
+     *  ダミーシミュレーター
+     *  移動後のシミュレーションを行うための一連のメソッド
+     */
+     
+    // 移動シミュレーター
+	public void progOne(Tank dummy, double x, double y) {
+		dummy. resetAct();
+    	while(dummy.activity() > 4) {
+    		dummy.move(x,y);
+    	}
+		
+	}
 
 
 
