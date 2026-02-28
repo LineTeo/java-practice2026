@@ -218,6 +218,7 @@ public abstract class Tank {
     public long serial() { return serialNo; }
     public int getRange() { return MAX_RNG; }
     public int getMaxAmmo() { return maxAmmo; }
+    public double getRrate() { return rRate; }
 
 
     
@@ -258,17 +259,16 @@ public abstract class Tank {
 	}
 	
 
-	private int damage(Tank target) {						//攻撃で与えるダメージ返すメソッド
-		
-//		return (int)(this.attack/distanceSQ(target) *( rnd.nextInt(10)+2000));
-		
+	public double normalDamage(Tank target) {  //基準与ダメージ（ランダム要素を含まない）
 		final double atackRange = 20.0;
 		final double baranceParam = 0.5;
-		double temp = Math.pow((atackRange - distance(target)) , 2.0) * this.attack * baranceParam;
-        System.out.println("ダメージ: " + temp);
+		return  Math.pow((atackRange - distance(target)) , 2.0) * this.attack * baranceParam;
+	}
+	
+	private int damage(Tank target) {	//ランダム要素を加味し、実際に攻撃で与えるダメージ返すメソッド
 		
 		
-  		return (int)(temp*((1-this.rRate) + 2 * this.rRate * Math.random())); 
+  		return (int)( normalDamage(target)*((1-this.rRate) + 2 * this.rRate * Math.random())); 
 	}
 	
 
@@ -306,7 +306,7 @@ public abstract class Tank {
 	    
 		// xが0以下の場合はTrue、xがL以上の場合はfalseを返す（範囲外の制御）
 	    if (D <= AHD) {
-	    	p =  2.0;
+	    	p =  1.0;
 	    } else  if(D >= MAX_RNG) {
 	    	p = -1.0;
 		} else {
