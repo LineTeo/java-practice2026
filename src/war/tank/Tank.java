@@ -25,7 +25,7 @@ public abstract class Tank {
     
     //　行動力関連定数群
     final private int MAX_ACT = 8;			//最大行動力
-    final private double rRate = 0.25; 		//ばらつき係数
+    final private double rRate = 0.35; 		//ばらつき係数
     protected int REP_CST = 8;	//攻撃時消費行動力
     protected int ATC_CST = 4;	//攻撃時消費行動力
     protected int CHG_CST = 2;	//補給時消費行動力
@@ -200,19 +200,20 @@ public abstract class Tank {
       
 
     // ゲッター
-    public String getName() { return name; }
+    public String getName() { return name; }        // constractor
     public int getHp() { return hp; }
-    public int getMaxHp() { return maxHp; }
-    public int getAttack() { return attack; }
-    public int getDefense() { return defense; }
+    public int getMaxHp() { return maxHp; }			// constractor
+    public int getAttack() { return attack; }		// constractor
+    public int getDefense() { return defense; }		
     public double getX() { return x; }
     public double getY() { return y; }
-    public double getAngle() { return angle; }
+    public double getAngle() { return angle; }		// constractor
+    public double getSpeed() { return speed; }		// constractor
     public int getAmmo() { return ammo; }
     public boolean isAlive() { return isAlive; }
     public int activity() { return activePoint; }
-    public int jinei() { return jinei; }
-    public long serial() { return serialNo; }
+    public int getJinei() { return jinei; }
+    public long getSerial() { return serialNo; }
     public int getRange() { return MAX_RNG; }
     public int getMaxAmmo() { return maxAmmo; }
     public double getRrate() { return rRate; }
@@ -221,14 +222,12 @@ public abstract class Tank {
     
     
     // セッター
-    protected void setMaxHp(int n) {maxHp = n; return; }
-    protected void setAttack(int n) { attack = n; return ; }
-    protected void setDefense(int n) { defense = n; return; }
-    protected void setXY(double x,double y) {
-    	this.x = x;
-    	this.y = y;   	
-    	return; }
+    protected void setHp(int n) {hp = n; return; }
+    protected void setSpeed(double n) {speed = n; return; }
+    protected void setAngle(double n) {angle = n; return; }
     public void setType(String n) { modelType = n; return; }
+   
+    
     public void resetAct() { activePoint = MAX_ACT; return;  }
 
     

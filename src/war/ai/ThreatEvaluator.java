@@ -3,11 +3,9 @@ package war.ai;
 import war.tank.Tank;
 
 /**
- * ThreatEvaluator - 脅威・機会評価クラス
- *
+ * ThreatEvaluator - 行動判断
  * BattleState の情報と AIConfig のパラメータをもとに、
- * 脅威値（threat）と機会値（opportunity）を計算する。
- * ActionSelector はこの結果をもとに行動を判断する。
+ * 
  */
 public class ThreatEvaluator {
 
@@ -133,34 +131,34 @@ public class ThreatEvaluator {
 
 
 
-    public enum times {
-        singleAction,doubleAction ;
+    public enum Times {
+        SINGLE,
+        DOUBLE
     }
-
     
     // ========================================
     // 判断パラメーター算出
     // ========================================
     
     //　ラッパー
-    public double calcAC(times times , Tank self , Tank target) {
+    public double calcAC(Times times , Tank self , Tank target) {
     	return getParam(times , self , target);
     }
     
-    public double calcDC(times times , Tank self , Tank target) {
+    public double calcDC(Times times , Tank self , Tank target) {
     	return getParam(times , target , self);
     }
-    public double calcAT(times times , Tank dummy , Tank target) {
+    public double calcAT(Times times , Tank SimuSelf , Tank target) {
 
-    	return getParam(times , dummy , target);
+    	return getParam(times , SimuSelf , target);
     }
-    public double calcDT(times times , Tank dummy , Tank target) {
-    	return getParam(times , target , dummy);
+    public double calcDT(Times times , Tank SimuSelf , Tank target) {
+    	return getParam(times , target , SimuSelf);
     }
     
     //　本体
     
-    public double getParam(times times, Tank offence, Tank deffence) {
+    public double getParam(Times times, Tank offence, Tank deffence) {
     /*
     *　  　　　offence   deffenc  
     *  AC 　　  self     terget   
@@ -173,43 +171,47 @@ public class ThreatEvaluator {
     	double damageMax = offence.normalDamage(deffence) + damageRng / 2;
     	double damageMin = offence.normalDamage(deffence) - damageRng / 2;
 
+//    	System.out.printf("Min %.2f , Rng %.2f , ",damageMin, damageRng);
+    	
+    	
     	double HP = deffence.getHp();
         
         double hit = offence.HitRate(deffence);
 
         
-        double getResult;
+        double getResult = 0 ;
 
         hit = offence.HitRate(deffence);
 
         switch (times) {
-            case singleAction: //1回で倒せるかどうか
+            case SINGLE: //1回で倒せるかどうか
                 if (damageMax > HP) { 				//　　まず最大ダメージがHPを超えている
-                	getResult = Math.floor(Math.max(0.0, Math.min((HP - damageMin)/(2 * damageRng), 1.0)) * 100 * hit);
+                	getResult = Math.max(0.0, Math.min(1 - (HP - damageMin)/(2 * damageRng), 1.0))  * hit;
+                                   	
                 } else {
                     getResult = 0;
                 }
                 break;
 
-            case doubleAction:
+            case DOUBLE:
                 // 2発で倒す可能性(1発で倒す可能性も含む
 
             	if( HP > damageMin*2) {
-            		getResult= doubleResponce(HP-damageMin,damageRng);
-
+            		getResult =  doubleResponce(HP-damageMin*2,damageRng) * hit * hit; //2回当たるケース
+            		getResult += Math.max(0.0, Math.min(1 - (HP - damageMin)/(2 * damageRng), 1.0))  * 2*(1-hit)*hit;
             	} else {
-            		getResult = 1;
+            		getResult = 1.0 * hit;;
             	}
                 break;
-
+                
             default:
-                return 0;
+            	getResult = 0;
         }
-
-        getResult = Math.floor(getResult * 100);
         
         return getResult;
-    }
+        }
+
+        
 
 
     /**
@@ -250,15 +252,13 @@ public class ThreatEvaluator {
      */
      
     // 移動シミュレーター
-	public void progOne(Tank dummy, double x, double y) {
-		dummy. resetAct();
-    	while(dummy.activity() > 4) {
-    		dummy.move(x,y);
+	public void progOne(Tank tank, double x, double y) {
+		tank. resetAct();
+    	while(tank.activity() > 4) {
+    		tank.move(x,y);
     	}
 		
 	}
 
-
-
-
 }
+	

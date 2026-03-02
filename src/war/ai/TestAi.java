@@ -5,7 +5,6 @@ import java.util.List;
 
 import war.control.PlayerController;
 import war.tank.DummyTank;
-import war.tank.HeavyTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
 import war.tank.Tiger;
@@ -38,19 +37,19 @@ public class TestAi {
 	    final EnemyAI enemyAI = new EnemyAI(19);;
 	    
 	    
-		DummyTank dummy = new DummyTank();
-
 		
         tanks.clear();
-        tanks.add(new Tiger(     "タイガー",       FREND_SIDE,  9,  9));
-        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE,  9,  5));
-        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE, 17,  1));
-        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 15,  9));
-        tanks.add(new MediumTank("シャーマン４号", ENEMY_SIDE, 16, 13));
-        tanks.add(new HeavyTank( "シャーマン５号", ENEMY_SIDE,  9, 18));
-        tanks.add(new MediumTank("シャーマン６号", ENEMY_SIDE,  2, 16));
-        tanks.add(new MediumTank("シャーマン７号", ENEMY_SIDE,  2,  9));
-        tanks.add(new HeavyTank( "シャーマン８号", ENEMY_SIDE,  2,  2));
+        tanks.add(new Tiger(     "タイガー",       FREND_SIDE, 9,  9));
+        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 9,  7));
+        tanks.add(new MediumTank("シャーマン２号", ENEMY_SIDE, 8,  6));
+        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 7,  5));
+        tanks.add(new MediumTank("シャーマン４号", ENEMY_SIDE, 6,  4));
+        tanks.add(new MediumTank("シャーマン５号", ENEMY_SIDE, 5,  3));
+        tanks.add(new MediumTank("シャーマン６号", ENEMY_SIDE, 4,  2));
+        tanks.add(new MediumTank("シャーマン７号", ENEMY_SIDE, 3,  1));
+        tanks.add(new MediumTank("シャーマン８号", ENEMY_SIDE, 2,  0));
+        tanks.add(new MediumTank("シャーマン８号", ENEMY_SIDE, 1,  0));
+        tanks.add(new MediumTank("シャーマン８号", ENEMY_SIDE, 0,  0));
         selectedIndex = 0;
  	    
 	    
@@ -74,31 +73,24 @@ public class TestAi {
         AIConfig aiConfig = new AIConfig();
         ThreatEvaluator d = new ThreatEvaluator(aiConfig);
 
-        for(int i = 1 ; i < 9 ; i++) {
-//        	BS = stat.analyze(tanks.get(i), player , comTanks, plyTanks, 1) ;
-//        	System.out.println(BS.toString());
-//        	System.out.printf("脅威値 = %.1f, 機会値 = %.1f ", d.calcThreat(BS), d.calcOpportunity(BS));
+        for(int i = 1 ; i < tanks.size(); i++) {
+        	System.out.printf("距離C = %3.1f , %.2f ",tanks.get(i).distance(player), d.calcAC(ThreatEvaluator.Times.DOUBLE , tanks.get(i), player));
+//        	d.calcAC(ThreatEvaluator.Times.DOUBLE , tanks.get(i), player);
+ //       	d.calcDC(ThreatEvaluator.Times.DOUBLE , tanks.get(i), player);
 
-        	System.out.printf("距離 = %.1f, ",tanks.get(i).distance(player));
+            Tank cloneSelf = new DummyTank(tanks.get(i));
+            
+        	d.progOne(cloneSelf , player.getX() , player.getY());
+        	System.out.printf("距離T = %2.1f, res = %.2f\n",cloneSelf.distance(player),d.calcAC(ThreatEvaluator.Times.SINGLE , cloneSelf, player));
         	
-            System.out.printf("AC2 = %.1f, ",d.calcAC(ThreatEvaluator.times.doubleAction , tanks.get(i), player));
-        	dummy.setPos(tanks.get(i).getX(), tanks.get(i).getY());
-        	d.progOne(dummy , player.getX() , player.getY());
-        	System.out.printf("距離 = %.1f, ",dummy.distance(player));
-        	System.out.printf("AT1 = %.1f%n",d.calcAC(ThreatEvaluator.times.singleAction , dummy, player));
-        	
+            
         }
         
-        
-        
-        //ダミーシミュレーション
-        dummy.setPos(1, 1);
-    	System.out.printf("x = %.1f, y = %.1f%n", dummy.getX(), dummy.getY());
+        	
+        	System.out.printf("%.2f\n",(double)d.doubleResponce(270,486));
     	
-    	d.progOne(dummy , player.getX() , player.getY());
-		System.out.printf("D = %.1f%n" , dummy.distance(player));
-		d.progOne(dummy , player.getX() , player.getY());
-		System.out.printf("D = %.1f%n" , dummy.distance(player));
+
+       
    	
 		
 	}
