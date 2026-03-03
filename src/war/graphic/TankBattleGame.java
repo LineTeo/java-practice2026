@@ -34,7 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import war.ai.EnemyAI;
+import war.ai.EnemyAI2;
 import war.control.PlayerController;
 import war.tank.HeavyTank;
 import war.tank.MediumTank;
@@ -77,7 +77,8 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     private final PlayerController playerController;
 
     /** 敵AI担当 */
-    private final EnemyAI enemyAI;
+//    private final EnemyAI enemyAI;
+     private final EnemyAI2 enemyAI2;
 
     // ======================================================================
     // コンストラクタ
@@ -93,7 +94,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         // 各コンポーネントを生成
         renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
         playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
-        enemyAI          = new EnemyAI(GRID_SIZE - 1);
+        enemyAI2          = new EnemyAI2(GRID_SIZE - 1);
 
         tanks = new ArrayList<>();
         startGame();
@@ -189,13 +190,16 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         if (confirm != JOptionPane.YES_OPTION) return;
 
         ArrayList<Tank> friendlies = getFriendlyTanks();
+        ArrayList<Tank> enemyes = getEnemyTanks();
 
         // 敵戦車を順に行動させる
         for (int i = 1; i < tanks.size(); i++) {
             Tank enemy = tanks.get(i);
             if (!enemy.isAlive()) continue;
 
-            enemyAI.takeTurn(enemy, friendlies);
+//            enemyAI.takeTurn(enemy, friendlies);
+            enemyAI2.takeTurn(enemy, friendlies,enemyes);
+
             enemy.resetAct();
             repaint();
 
@@ -220,12 +224,20 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     // ======================================================================
     // ヘルパーメソッド
     // ======================================================================
-
-    /** 生存中の味方戦車リストを返す（EnemyAI に渡すため） */
+    /** 生存中のプレーヤー戦車リストを返す（EnemyAI に渡すため） */
     private ArrayList<Tank> getFriendlyTanks() {
         ArrayList<Tank> list = new ArrayList<>();
         for (Tank t : tanks) {
-            if (t.jinei() == FREND_SIDE && t.isAlive()) list.add(t);
+            if (t.getJinei() == FREND_SIDE && t.isAlive()) list.add(t);
+        }
+        return list;
+    }
+
+    /** 生存中の敵戦車リストを返す（EnemyAI に渡すため） */
+    private ArrayList<Tank> getEnemyTanks() {
+        ArrayList<Tank> list = new ArrayList<>();
+        for (Tank t : tanks) {
+            if (t.getJinei() == ENEMY_SIDE && t.isAlive()) list.add(t);
         }
         return list;
     }
@@ -235,7 +247,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         int friends = 0, enemies = 0;
         for (Tank t : tanks) {
             if (!t.isAlive()) continue;
-            if (t.jinei() == FREND_SIDE) friends++;
+            if (t.getJinei() == FREND_SIDE) friends++;
             else                          enemies++;
         }
 

@@ -34,22 +34,15 @@ public class TestAi {
 	    final PlayerController playerController = new PlayerController(20, 35);
 
 	    /** 敵AI担当 */
-	    final EnemyAI enemyAI = new EnemyAI(19);;
+	    final EnemyAI2 enemyAI2 = new EnemyAI2(19);;
 	    
 	    
 		
         tanks.clear();
-        tanks.add(new Tiger(     "タイガー",       FREND_SIDE, 9,  9));
-        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 9,  7));
-        tanks.add(new MediumTank("シャーマン２号", ENEMY_SIDE, 8,  6));
-        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 7,  5));
-        tanks.add(new MediumTank("シャーマン４号", ENEMY_SIDE, 6,  4));
-        tanks.add(new MediumTank("シャーマン５号", ENEMY_SIDE, 5,  3));
-        tanks.add(new MediumTank("シャーマン６号", ENEMY_SIDE, 4,  2));
-        tanks.add(new MediumTank("シャーマン７号", ENEMY_SIDE, 3,  1));
-        tanks.add(new MediumTank("シャーマン８号", ENEMY_SIDE, 2,  0));
-        tanks.add(new MediumTank("シャーマン８号", ENEMY_SIDE, 1,  0));
-        tanks.add(new MediumTank("シャーマン８号", ENEMY_SIDE, 0,  0));
+        tanks.add(new Tiger(     "タイガー",       FREND_SIDE, 9,  3));
+        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 3,  16));
+        tanks.add(new MediumTank("シャーマン２号", ENEMY_SIDE, 9,  13));
+        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 15,  9));
         selectedIndex = 0;
  	    
 	    
@@ -69,11 +62,51 @@ public class TestAi {
 	    plyTanks.clear();
 	    plyTanks.add(player);
 	    
-        BattleState BS;
         AIConfig aiConfig = new AIConfig();
-        ThreatEvaluator d = new ThreatEvaluator(aiConfig);
+        
+        DummyTank dummy = new DummyTank(tanks.get(1));
+        BattleState BS = stat.analyze(dummy, player, comTanks, plyTanks, 1);
 
-        for(int i = 1 ; i < tanks.size(); i++) {
+        ThreatEvaluator d = new ThreatEvaluator(aiConfig, BS);
+        
+    	double x , y ;
+
+        // 敵戦車を順に行動させる
+        for (int i = 1; i < tanks.size(); i++) {
+            Tank enemy = tanks.get(i);
+            if (!enemy.isAlive()) continue;
+
+            enemyAI2.takeTurn(enemy, plyTanks, comTanks);
+//            enemyAI.takeTurn(enemy, friendlies,enemyes);
+
+            enemy.resetAct();
+        }
+
+    	
+
+        
+        
+/*        	
+    	
+        for(double i = 1 ; i < 100; i++) {
+        	x = player.getX() - i / 10 ;
+        	y = player.getY() - i / 10 ;
+        	
+        	dummy.setXY(x,y);
+        	System.out.printf("%.2f ",dummy.distance(player));        	
+        	System.out.printf(", %.2f",d.calcAT(ThreatEvaluator.Times.SINGLE, dummy, player));        	
+        	System.out.printf(", %.2f",d.calcAT(ThreatEvaluator.Times.DOUBLE, dummy, player));        	
+        	System.out.printf(", %.2f",d.calcDT(ThreatEvaluator.Times.SINGLE, dummy, player));        	
+        	System.out.printf(", %.2f",d.calcDT(ThreatEvaluator.Times.DOUBLE, dummy, player));        	
+        	BS = stat.analyze(dummy, player, comTanks, plyTanks, 1);
+        	System.out.printf(", %2d",BS.distanceRankFromEnemy); 
+        	
+        	d.progOne(dummy , player.getX() , player.getY());
+        	System.out.printf(", %.2f",d.calcAT(ThreatEvaluator.Times.SINGLE, dummy, player));        	
+        	
+        	BS = stat.analyze(dummy, player, comTanks, plyTanks, 1);
+        	System.out.printf(", %2d\n",BS.distanceRankFromEnemy);        	
+        	
         	System.out.printf("距離C = %3.1f , %.2f ",tanks.get(i).distance(player), d.calcAC(ThreatEvaluator.Times.DOUBLE , tanks.get(i), player));
 //        	d.calcAC(ThreatEvaluator.Times.DOUBLE , tanks.get(i), player);
  //       	d.calcDC(ThreatEvaluator.Times.DOUBLE , tanks.get(i), player);
@@ -82,17 +115,9 @@ public class TestAi {
             
         	d.progOne(cloneSelf , player.getX() , player.getY());
         	System.out.printf("距離T = %2.1f, res = %.2f\n",cloneSelf.distance(player),d.calcAC(ThreatEvaluator.Times.SINGLE , cloneSelf, player));
-        	
+       	
             
         }
-        
-        	
-        	System.out.printf("%.2f\n",(double)d.doubleResponce(270,486));
-    	
-
-       
-   	
-		
-	}
-
+*/
+    }
 }

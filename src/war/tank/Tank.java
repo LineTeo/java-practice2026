@@ -182,7 +182,7 @@ public abstract class Tank {
         this.hp = (int)Math.min(this.maxHp, this.hp + amount);
         
         //経過メッセージ（デバッグ用）
-        System.out.println(this.name + "を修理！（HP: " + this.hp + "/" + this.maxHp + "）");
+//        System.out.println(this.name + "を修理！（HP: " + this.hp + "/" + this.maxHp + "）");
         
         //行動力は全部消費
         this.activePoint = 0;
@@ -225,6 +225,8 @@ public abstract class Tank {
     protected void setHp(int n) {hp = n; return; }
     protected void setSpeed(double n) {speed = n; return; }
     protected void setAngle(double n) {angle = n; return; }
+    protected void setX(double n) {x = n; return; }
+    protected void setY(double n) {y = n; return; }
     public void setType(String n) { modelType = n; return; }
    
     
@@ -268,24 +270,9 @@ public abstract class Tank {
 	private int damage(Tank target) {	//ランダム要素を加味し、実際に攻撃で与えるダメージ返すメソッド
 		
 		
-  		return (int)( normalDamage(target)*((1-this.rRate) + 2 * this.rRate * Math.random())); 
+  		return (int)( normalDamage(target)*((1-this.rRate) + 2 / 3 * this.rRate *( Math.random()+ Math.random()+ Math.random()))); 
 	}
-	
-
-	private boolean meichu2(Tank target) {					//標準命中判定 旧版
-//		double k=(1-1/Math.pow((21-distanceSQ(target)),0.1))*(1-1/Math.pow(21, 0.1))+Math.random();
-		final double K =(1-1/Math.pow(MAX_RNG, 0.1));
-				
-		double p =(1-1/Math.pow(MAX_RNG - distance(target) , 0.1)) / K ;
-        System.out.println("命中率: " + p *100 +"%");
-        
-		if (p + Math.random() >1) {  //距離の二乗の逆数の 0～5倍を判定パラメータとする
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
+		
 	private boolean meichu(Tank target) {					//命中判定で、命中率を分割
 	     
 		double p = HitRate(target);
@@ -294,8 +281,7 @@ public abstract class Tank {
 	     
          if (Math.random() < p) return true;
 		 return false;
-		 
-		 
+		 	 
 		}	
 	
 
@@ -308,7 +294,7 @@ public abstract class Tank {
 	    if (D <= AHD) {
 	    	p =  1.0;
 	    } else  if(D >= MAX_RNG) {
-	    	p = -1.0;
+	    	p = 0.0;
 		} else {
 			p = 0.5 * (Math.cos((Math.PI / (MAX_RNG-AHD)) * (D - AHD)) + 1.0) ;
 		}
@@ -324,6 +310,8 @@ public abstract class Tank {
 		}	
 	
 
+	
+	
 	//インスタンス比較用
 	@Override
     public boolean equals(Object obj) {
@@ -352,5 +340,6 @@ public abstract class Tank {
         return Long.hashCode(serialNo);
     }
 
+    
 
 }

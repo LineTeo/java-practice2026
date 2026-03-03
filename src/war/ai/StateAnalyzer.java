@@ -68,14 +68,17 @@ public class StateAnalyzer {
         // ========================================
         state.allyCount = countAlive(allies);
 
-        // 距離順位：target（敵）からみた距離順位
+        // 距離順位：target（敵）からみた距離順位とリスト
         state.distanceRankFromEnemy = calcDistanceRank(self, allies, target);
+        state.disListFromEnemy = getDistanceList(allies, target);
 
         // 最も近い味方との距離
         state.closestAllyDistance = calcClosestAllyDistance(self, allies);
 
         // 味方の平均HP割合
         state.averageAllyHP = calcAverageHPRatio(allies);
+        
+        
 
         // ========================================
         // 4. 全体の状況
@@ -146,6 +149,29 @@ public class StateAnalyzer {
         return rank;
     }
 
+    
+    /**
+     * 距離リストを求める
+     */
+    
+    private double[] getDistanceList(List<Tank> allies, Tank target) {
+        if (target == null) return null;
+
+        double disList[] ;
+        disList = new double[countAlive(allies)];
+
+        int i = 0;
+        for (Tank ally : allies) {
+            if (ally.isAlive()) {
+                disList[i] = calcDistance(ally, target);
+                i++;
+            }
+        }
+        return disList;
+    }
+
+    
+    
     /** 生存している味方の中で最も近い距離 */
     private double calcClosestAllyDistance(Tank self, List<Tank> allies) {
         double minDist = Double.MAX_VALUE;

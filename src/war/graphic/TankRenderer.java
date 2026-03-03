@@ -227,7 +227,7 @@ public class TankRenderer {
      */
     private Color resolveTankColor(Tank tank) {
         double hpRatio    = (double) tank.getHp() / tank.getMaxHp();
-        boolean isFriendly = (tank.jinei() == 0);
+        boolean isFriendly = (tank.getJinei() == 0);
 
         if (isFriendly) {
             // 友軍カラー（緑系）
