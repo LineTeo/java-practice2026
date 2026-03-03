@@ -3,17 +3,40 @@ package war.ai;
 
 public class AIConfig {
     // ========================================
-    // 脅威値の重み係数（合計1.0）
+    // ゾーン判定 敵からの距離
     // ========================================
-    public double THREAT_WEIGHT_DISTANCE = 0.4;      // 距離による脅威
-    public double THREAT_WEIGHT_HP = 0.3;            // HP による脅威
-    public double THREAT_WEIGHT_RANK = 0.3;          // 順位による脅威
+    public double THREAT_ZONE_1 = 0.3;      		// 決戦領域
+    public double THREAT_ZONE_2 = 0.6;      		// 戦闘領域
+    public double THREAT_ZONE_3 = 0.3;      		// 回復領域
     
     // ========================================
-    // 機会値の重み係数（合計1.0）
+    // AC DC AT DTの閾値パラメータ
+    // 命名規則　詳しくは仕様表を参照
+    //   　P0*-------Z*------AA------AC---------n------O
+    // 仕様表のNo  ゾーン 2回の行動 パラメータ 回数  以上/以下
     // ========================================
-    public double OPP_WEIGHT_DISTANCE = 0.6;         // 距離による機会
-    public double OPP_WEIGHT_HP = 0.4;               // HP による機会
+    public double P01_Z1_AA_AC_2_O = 0.9;
+    public double P02_Z1_AE_DT_2_U = 0.2;
+    public double P03_Z1_ER_DT_2_U = 0.6;
+    public double P05_Z2_CA_AT_1_O = 1.0;
+    public double P06_Z2_AA_DC_2_U = 0.3;
+    public double P07_Z2_AE_DT_2_U = 0.3;
+    public double P08_Z2_EE_DT_2_O = 0.7;
+    public double P10_Z3_CC_DT_2_U = 0.3;
+    public double P11_Z3_CA_DT_2_U = 0.3;
+
+    
+    
+    
+    
+    // ========================================
+    // 距離順位による脅威係数（DC,DTの計算に使用）
+    // ========================================
+    public double RANK_1_THREAT = 1.0;             // 1位（最も近い）
+    public double RANK_2_THREAT = 0.4;              // 2位
+    public double RANK_3_THREAT = 0.2;              // 3,4位
+    public double RANK_4_THREAT = 0.1;              // 5位以降
+    
     
     // ========================================
     // 距離評価パラメータ
@@ -21,25 +44,6 @@ public class AIConfig {
     public double OPTIMAL_RANGE_MIN = 0.5;           // 最適射程下限（射程の50%）
     public double OPTIMAL_RANGE_MAX = 0.7;           // 最適射程上限（射程の70%）
     public double DANGER_RANGE = 0.3;                // 危険距離（射程の30%以内）
-    
-    // ========================================
-    // 距離順位による脅威値（線形補間）
-    // ========================================
-    public double RANK_1_THREAT = 100.0;             // 1位（最も近い）
-    public double RANK_2_THREAT = 50.0;              // 2位
-    public double RANK_3_THREAT = 20.0;              // 3位
-    public double RANK_4_THREAT = 10.0;              // 4位以降
-    
-    // ========================================
-    // HP による脅威・機会の曲線パラメータ
-    // ========================================
-    public double HP_CURVE_EXPONENT = 2.0;           // 曲線の急峻さ（1.0=線形, 2.0=二次曲線）
-    
-    // ========================================
-    // 行動選択の閾値
-    // ========================================
-    public double DEFENSE_THRESHOLD = 10.0;          // 脅威値 - 機会値 > この値 → 守備
-    public double ATTACK_THRESHOLD = -10.0;          // 脅威値 - 機会値 < この値 → 攻撃
     
     // ========================================
     // 行動コスト

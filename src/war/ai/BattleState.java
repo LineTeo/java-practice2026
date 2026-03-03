@@ -34,7 +34,11 @@ public class BattleState {
     // 味方の状態
     // ========================================
     public int    allyCount;                // 生存味方数（自分を除く）
+ 
     public int    distanceRankFromEnemy;    // 敵からの距離順位（1=最も近い）
+
+    public double[]  disListFromEnemy;    // 敵からの距離配列
+    
     public double closestAllyDistance;      // 最も近い味方との距離
     public double averageAllyHP;            // 味方の平均HP割合（0.0〜1.0）
 
