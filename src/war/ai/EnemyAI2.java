@@ -242,7 +242,7 @@ public class EnemyAI2 {
     	int initAct = tank.activity();
     	
         for (int i= 0; i < 4 ; i++ ) {
-        	if(tank.activity() > 0 && tank.getY() > 0 && tank.getX() < MAX_GRID  && tank.getY() > 0 && tank.getY() < MAX_GRID ) {
+        	if(tank.activity() > 0 && tank.getX() > 0 && tank.getX() < MAX_GRID  && tank.getY() > 0 && tank.getY() < MAX_GRID ) {
     			tank.escape(teki);
     		} else {
     			break;
