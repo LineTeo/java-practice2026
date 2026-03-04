@@ -33,27 +33,6 @@ public class EnemyAI2 {
     // 定数（戦術パラメータ）
     // ======================================================================
 
-    /** この HP 割合以下で「危険状態」→ 退避・修理フェーズへ */
-    private static final double HP_LOW  = 0.30;
-
-    /** この HP 割合以上で「高 HP 状態」→ 積極攻撃フェーズへ */
-    private static final double HP_HIGH = 0.70;
-
-    /**
-     * 最適射程の下限倍率（射程 × この値）。
-     * これより近い場合は「近すぎ」と判断して後退する。
-     */
-    private static final double OPT_RANGE_MIN = 0.30;
-
-    /**
-     * 最適射程の上限倍率（射程 × この値）。
-     * これより遠い場合は「遠すぎ」と判断して前進する。
-     */
-    private static final double OPT_RANGE_MAX = 0.60;
-
-    /** 退避判定距離: 脅威がこの距離以内なら退避を優先する */
-    private static final double DANGER_DIST = 4.0;
-
     /** グリッドの最大座標（端の判定に使用） */
     private final int MAX_GRID;
 
@@ -131,188 +110,79 @@ public class EnemyAI2 {
         double z = self.distance(target)/self.getRange();
 ;
         
-        
+		String ret = "ETC0";
+
     	if (z < aiConfig.THREAT_ZONE_1) {
     		if (AC2 > aiConfig.P01_Z1_AA_AC_2_O ) {
     			self.attackTarget(target);
     			self.attackTarget(target);
-    	        System.out.printf("%s : P1 ATC,ATC \n",self.getName());
+    	        ret = "P1 ATC,ATC";
 
     			
     		} else if(DT2 < aiConfig.P02_Z1_AE_DT_2_U){
     			self.attackTarget(target);
-    			dec.escapeOne(self,target);
-    	        System.out.printf("%s : P2 ATC,ESC\n",self.getName());
+    			escapeOne(self,target);
+    	        ret = "P2 ATC,ESC";
     		} else if(DT2 < aiConfig.P03_Z1_ER_DT_2_U) {
-    			dec.escapeOne(self,target);
+    			escapeOne(self,target);
     			self.repair();
-    	        System.out.printf("%s : P3 REP,ESC\n",self.getName());
+    	        ret = "P3 REP,ESC";
     		} else {
-    			dec.escapeOne(self,target);
-    			dec.escapeOne(self,target);
-    	        System.out.printf("%s : P4 ESC,ESC\n",self.getName());
+    			escapeOne(self,target);
+    			escapeOne(self,target);
+    	        ret = "P4 ESC,ESC";
     		}    				
     	} else if (z < aiConfig.THREAT_ZONE_2) {
 
     		if (AT1 > aiConfig.P05_Z2_CA_AT_1_O ) {
-				dec.progOne(self,target.getX(),target.getY());
+				progOne(self,target.getX(),target.getY());
     			self.attackTarget(target);
-    	        System.out.printf("%s : P5 APR,ATC\n",self.getName());
+    	        ret = "P5 APR,ATC";
     			
     		} else if(DC2 < aiConfig.P06_Z2_AA_DC_2_U){
     			self.attackTarget(target);
     			self.attackTarget(target);
-    	        System.out.printf("%s : P6 ATC,ATC\n",self.getName());
+    	        ret = "P6 ATC,ATC";
     		} else if(DT2 < aiConfig.P07_Z2_AE_DT_2_U){
-    			dec.escapeOne(self,target);
+    			escapeOne(self,target);
     			self.repair();
-    	        System.out.printf("%s : P7 ESC,REP\n",self.getName());
+    	        ret = "P7 ESC,REP";
     		} else if(DT2 > aiConfig.P08_Z2_EE_DT_2_O) {
-    			dec.escapeOne(self,target);
-    			dec.escapeOne(self,target);
-    	        System.out.printf("%s : P8 ESC,ESC\n",self.getName());
+    			escapeOne(self,target);
+    			escapeOne(self,target);
+    	        ret = "P8 ESC,ESC";
     		} else {
-    			dec.escapeOne(self,target);
+    			escapeOne(self,target);
     			self.repair();    				
-    	        System.out.printf("%s : P9 ESC,REP\n",self.getName());
+    	        ret = "P9 ESC,REP";
     		}
-    	} else {  
+    	} else if(self.getHp() < self.getMaxHp()){
+    		self.repair();
+	        ret = "ETC1";
+    		
+    	} else {
     		if(DT2 < aiConfig.P10_Z3_CC_DT_2_U ){
-				dec.progOne(self,target.getX(),target.getY());
-				dec.progOne(self,target.getX(),target.getY());
-    	        System.out.printf("%s : P10 PRG,PRG\n",self.getName());
-    		} else if(DT2 < aiConfig.P11_Z3_CA_DT_2_U){
-				dec.progOne(self,target.getX(),target.getY());
-    			self.attackTarget(target);
-    	        System.out.printf("%s : P11 PRG,ATC\n",self.getName());
-    		} else {
-    			self.repair();
-    			self.repair();
-    	        System.out.printf("%s : P12 REP,REP\n",self.getName());
+				progOne(self,target.getX(),target.getY());
+    	        progOne(cloneSelf,target.getX(),target.getY());
+                DT2 = dec.calcDT(ThreatEvaluator.Times.DOUBLE, cloneSelf, target);        
+        		if(DT2 < aiConfig.P11_Z3_CA_DT_2_U ){
+    				progOne(self,target.getX(),target.getY());
+        	        ret = "P11 APR,APR";        			
+        		} else  {
+        			self.attackTarget(target);
+    	        ret = "P12 APR,ATC";
+        		}
+        	} else {
+				progOne(self,target.getX(),target.getY());
+    	        ret = "P13 ATC, ATC";
     		}    		
     		
      	}
+    	log(self, ret);
         return 0;
     }
     
-    
-    
-    // ======================================================================
-    // HP フェーズ別行動
-    // ======================================================================
 
-    /**
-     * LOW フェーズ（HP < 30%）: 退避 → 修理。
-     * 脅威が近い場合はまず距離を取り、その後全行動力で修理する。
-     */
-    private void actZone1(Tank enemy, Tank threat) {
-        log(enemy, "フェーズ: LOW（HP危険）");
-        if (enemy.distance(threat) <= DANGER_DIST && enemy.activity() > 0) {
-            retreat(enemy, threat);
-        }
-        if (enemy.activity() > 0) {
-            log(enemy, "修理実行");
-            enemy.repair();
-        }
-    }
-
-    /**
-     * MID フェーズ（HP 30-70%）: 最適射程帯を維持して堅実に攻撃。
-     * 近すぎれば後退、遠すぎれば前進してから攻撃する。
-     */
-    private void phaseMid(Tank enemy, Tank target) {
-        log(enemy, "フェーズ: MID（最適射程維持）");
-        adjustToOptimalRange(enemy, target);   // [1] 射程最適化
-        if (isInRange(enemy, target)) {
-            attackRepeatedly(enemy, target);
-        }
-    }
-
-    /**
-     * HIGH フェーズ（HP > 70%）: 積極的に接近して連射する。
-     */
-    private void phaseHigh(Tank enemy, Tank target) {
-        log(enemy, "フェーズ: HIGH（積極攻撃）");
-        approachToRange(enemy, target);
-        if (isInRange(enemy, target)) {
-            attackRepeatedly(enemy, target);
-        }
-    }
-
-    // ======================================================================
-    // [1] 最適射程ポジション取り
-    // ======================================================================
-
-    /**
-     * 最適射程帯（射程の 60〜80%）に収まるよう位置を調整する。
-     * 近すぎ → 後退、遠すぎ → 前進。
-     */
-    private void adjustToOptimalRange(Tank enemy, Tank target) {
-        double range  = enemy.getRange();
-        double optMin = range * OPT_RANGE_MIN;
-        double optMax = range * OPT_RANGE_MAX;
-        double dist   = enemy.distance(target);
-
-        if (dist < optMin && enemy.activity() >= 1) {
-            log(enemy, String.format("後退（現距離 %.1f < 最適下限 %.1f）", dist, optMin));
-            retreat(enemy, target);
-
-        } else if (dist > optMax && enemy.activity() >= 1) {
-            log(enemy, String.format("前進（現距離 %.1f > 最適上限 %.1f）", dist, optMax));
-            approachToRange(enemy, target);
-        }
-    }
-
-    /**
-     * 射程内（射程の上限）まで 1 マスずつ前進する。
-     */
-    private void approachToRange(Tank enemy, Tank target) {
-        while (enemy.activity() >= 1 && !isInRange(enemy, target)) {
-            double nx = clamp(target.getX(), 0, MAX_GRID);
-            double ny = clamp(target.getY(), 0, MAX_GRID);
-            if (enemy.move(nx, ny) != 0) break;
-        }
-    }
-
-    /**
-     * 脅威から離れる方向に退避する。
-     * グリッド端に追い詰められないよう中央バイアス（1マス余裕）をかける。
-     */
-    private void retreat(Tank enemy, Tank threat) {
-        int steps = 0;
-        while (enemy.activity() >= 1
-                && enemy.distance(threat) <= DANGER_DIST
-                && steps < 4) {
-
-            double escX = enemy.getX() - (threat.getX() - enemy.getX());
-            double escY = enemy.getY() - (threat.getY() - enemy.getY());
-
-            // グリッド端 1マスは踏まないようにクランプ
-            escX = clamp(escX, 1, MAX_GRID - 1);
-            escY = clamp(escY, 1, MAX_GRID - 1);
-
-            if (enemy.move(escX, escY) != 0) break;
-            steps++;
-        }
-        log(enemy, String.format("退避後: (%.1f, %.1f)", enemy.getX(), enemy.getY()));
-    }
-
-    // ======================================================================
-    // 攻撃サブルーチン
-    // ======================================================================
-
-    /**
-     * 行動力と弾薬が続く限り攻撃を繰り返す（連射）。
-     */
-    private void attackRepeatedly(Tank enemy, Tank target) {
-        while (enemy.activity() >= 4
-                && enemy.getAmmo() > 0
-                && target.isAlive()) {
-            log(enemy, String.format("攻撃: %s (距離 %.1f)",
-                target.getName(), enemy.distance(target)));
-            if (enemy.attackTarget(target) != 0) break;
-        }
-    }
 
     // ======================================================================
     // ターゲット選択
@@ -343,29 +213,94 @@ public class EnemyAI2 {
     // ======================================================================
     // ユーティリティ
     // ======================================================================
-
     /** 戦車が目標に対して有効射程内かどうかを判定する */
-    private boolean isInRange(Tank enemy, Tank target) {
-        return enemy.distance(target) <= (enemy.getRange()*OPT_RANGE_MAX);
-    }
+//    private boolean isInRange(Tank enemy, Tank target) {
+//        return enemy.distance(target) <= (enemy.getRange()*OPT_RANGE_MAX);
+//    }
 
     /** 値を [min, max] の範囲にクランプする */
     private double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
     }
+     
 
-    /** デバッグ用ログ出力 */
-    private void log(Tank enemy, String msg) {
-        System.out.println("[AI] " + enemy.getName() + " → " + msg);
-    }
-    /** ダミーを目標に向かって行動力4で前進させる **/
-	public void progOne(DummyTank tank, double x, double y) {
-		tank. resetAct();
-    	while(tank.activity() > 4) {
-    		tank.move(x,y);
-    	}
-		
+    // 移動アクション
+	public void progOne(Tank tank, double x, double y) {
+        double nx = clamp(x, 0, MAX_GRID);
+        double ny = clamp(y, 0, MAX_GRID);
+
+        for (int i= 0; i < 4 ; i++ ) {
+        	if(tank.activity() > 0 && Math.abs(x - tank.getX()) +Math.abs(y - tank.getY()) > 1.1) {
+        		tank.move(nx,ny);        		
+        	}
+        }
+        		
 	}
 
+    // 退避アクション
+	public void escapeOne(Tank tank, Tank teki) {
+    	int initAct = tank.activity();
+    	
+        for (int i= 0; i < 4 ; i++ ) {
+        	if(tank.activity() > 0 && tank.getY() > 0 && tank.getX() < MAX_GRID  && tank.getY() > 0 && tank.getY() < MAX_GRID ) {
+    			tank.escape(teki);
+    		} else {
+    			break;
+    		}
+        }
+        
+        if (initAct - tank.activity() < 4 && tank.activity() > 0) {		// 追い詰められた時
+    		if (tank.getX() == 0 || tank.getX() == MAX_GRID) { 			// 左右端にいる場合
+                if (teki.getY() == tank.getY()) {							// 相手と同じ縦位置なら、Y方向に広い方に逃げる
+                	if (tank.getY() < MAX_GRID/2 ) {
+                		for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
+                			tank.move(tank.getX(), MAX_GRID);
+                		}
+                	} else {
+                		for (int i = 0 ; i < 4 - (initAct - tank.activity()); i++) {
+                			tank.move(tank.getX(), 0 );
+                		}
+                	}
+                } else {													//　そうでないなら相手から遠ざかるY方向
+            		if (teki.getY() < tank.getY()) {
+            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
+            				tank.move(tank.getX(), MAX_GRID);
+            			}
+            		} else {
+            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
+            				tank.move(tank.getX(), 0);
+            			}            			
+            		}
+                }
+    		} else {
+                if (teki.getX() == tank.getX()) {							// 相手と同じ横位置なら、X方向に広い方に逃げる
+                	if (tank.getY() < MAX_GRID/2 ) {
+                		for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
+                			tank.move(MAX_GRID, tank.getY());
+                		}
+                	} else {
+                		for (int i = 0 ; i < 4 - (initAct - tank.activity()); i++) {
+                			tank.move(0, tank.getY());
+                		}
+                	}
+                } else {													//　そうでないなら相手から遠ざかるX方向
+            		if (teki.getY() < tank.getY()) {
+            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
+            				tank.move(MAX_GRID, tank.getY());
+            			}
+            		} else {
+            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
+            				tank.move(0, tank.getY());
+            			}            			
+            		}
+                }
+    		}
+    	}
+	}
+
+    /** デバッグ用ログ出力 */
+    private void log(Tank self, String msg) {
+        System.out.println("[AI] " + self.getName()  + msg + " → " + self.getX() +", "+self.getY());
+    }
 
 }

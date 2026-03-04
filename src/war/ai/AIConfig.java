@@ -23,11 +23,7 @@ public class AIConfig {
     public double P07_Z2_AE_DT_2_U = 0.3;
     public double P08_Z2_EE_DT_2_O = 0.7;
     public double P10_Z3_CC_DT_2_U = 0.3;
-    public double P11_Z3_CA_DT_2_U = 0.3;
-
-    
-    
-    
+    public double P11_Z3_CA_DT_2_U = 0.3; 
     
     // ========================================
     // 距離順位による脅威係数（DC,DTの計算に使用）
@@ -37,6 +33,9 @@ public class AIConfig {
     public double RANK_3_THREAT = 0.2;              // 3,4位
     public double RANK_4_THREAT = 0.1;              // 5位以降
     
+    
+    
+    // 以下は現時点では使わない予定
     
     // ========================================
     // 距離評価パラメータ

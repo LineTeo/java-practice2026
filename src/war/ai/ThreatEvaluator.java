@@ -21,10 +21,7 @@ public class ThreatEvaluator {
 
     // ========================================
     // 公開メソッド
-    // ========================================
-
-
-
+    // =======================================
     public enum Times {
         SINGLE,
         DOUBLE
@@ -35,43 +32,25 @@ public class ThreatEvaluator {
     // ========================================
     
     //　ラッパー
-    public double calcAC(Times times , Tank self , Tank target) {
-    	return getParam(times , self , target);
-    }
-    
-    public double calcDC(Times times , Tank self , Tank target) {
-    	return getParam(times , target , self) * calcRankThreat(self,target);
-    }
-    public double calcAT(Times times , Tank SimuSelf , Tank target) {
-
-    	return getParam(times , SimuSelf , target);
-    }
-    public double calcDT(Times times , Tank SimuSelf , Tank target) {
-    	return getParam(times , target , SimuSelf) * calcRankThreat(SimuSelf,target);
-
-    }
+    public double calcAC(Times times , Tank self , Tank target) {return getParam(times , self , target);}
+    public double calcDC(Times times , Tank self , Tank target) {return getParam(times , target , self) * calcRankThreat(self,target);}
+    public double calcAT(Times times , Tank SimuSelf , Tank target) {return getParam(times , SimuSelf , target);}
+    public double calcDT(Times times , Tank SimuSelf , Tank target) {return getParam(times , target , SimuSelf) * calcRankThreat(SimuSelf,target);}
     
     //　本体
     public double getParam(Times times, Tank offence, Tank deffence) {
-    /*
-    *　  　　　offence   deffenc  
+    /* 　  　 offence   deffenc  
     *  AC 　　  self     terget   
     *  DC 　　 target     self 
     *  AT 　　 selfSIM   terget   
-    *  DT 　　 target    selfSIM  
-    */
+    *  DT 　　 target    selfSIM  */
 
         double damageRng = offence.normalDamage(deffence) * 2 * offence.getRrate();
     	double damageMax = offence.normalDamage(deffence) + damageRng / 2;
     	double damageMin = offence.normalDamage(deffence) - damageRng / 2;
 
-//    	System.out.printf("Min %.2f , Rng %.2f , ",damageMin, damageRng);
-    	
-    	
     	double HP = deffence.getHp();
-        
         double hit = offence.HitRate(deffence);
-
         
         double getResult = 0 ;
 
@@ -80,17 +59,7 @@ public class ThreatEvaluator {
         switch (times) {
             case SINGLE: //1回で倒せるかどうか
             	getResult = getProbabilityGreaterThan((HP - damageMin)/(2 * damageRng), 3) * hit ;           	
-
-            	/*            	
-                if (damageMax > HP) { 				//　　まず最大ダメージがHPを超えている
-                	getResult = Math.max(0.0, Math.min(1 - (HP - damageMin)/(2 * damageRng), 1.0))  * hit;
-                                   	
-                } else {
-                    getResult = 0;
-                }
-*/
             	break;
-
             case DOUBLE:
                 // 2発で倒す可能性(1発で倒す可能性も含む)
             	// 2発とも当たる可能性			（Hit^2)
@@ -99,25 +68,20 @@ public class ThreatEvaluator {
             	// ダメージのランダム成分ははランダムの3回重ね合わせなので、2回命中時は6回の重ね合わせになる
 
             	if( HP > damageMin*2) {
-
-//            		getResult =  doubleResponce(HP-damageMin*2,damageRng) * hit * hit; //2回当たるケース
-//            		getResult += Math.max(0.0, Math.min(1 - (HP - damageMin)/(2 * damageRng), 1.0)) * 2 *(1-hit)*hit;
             		getResult =  getProbabilityGreaterThan((HP - damageMin * 2)/(4 * damageRng), 6) * hit * hit; //2回当たるケース
-//                	System.out.printf("%.2f, %.2f, %.2f, %.2f, ",getResult,damageMin,damageRng,hit);        	
             		getResult +=  getProbabilityGreaterThan((HP - damageMin)/(2 * damageRng), 3) * 2 * (1 - hit) * hit; //1回当たるケース
-//                	System.out.printf("%.2f, %.2f, %.2f, %.2f",getResult,damageMin,damageRng,hit);        	
             	
-            	} else {
-            		getResult = 1.0 * hit;;
+            	} else if ( HP >= damageMin){ 	//HPが最低ダメージの2倍以下だと、2回当たると必ず撃破となる
+            		getResult = 1.0 * hit * hit;
+            	} else {						//HPが最低ダメージ以下だと、2回外さない限り、必ず撃破となる
+            		getResult = 1.0 * (1.0 - (1.0 - hit) * (1.0 - hit)) ;
             	}
                 break;
-                
             default:
             	getResult = 0;
         }
-        
         return getResult;
-        }
+    }
 
 
     // ========================================
@@ -144,11 +108,8 @@ public class ThreatEvaluator {
             case 2:  return config.RANK_3_THREAT;
             case 3:  return config.RANK_3_THREAT;
             default: return config.RANK_4_THREAT;
-        }
-    
-    
+        }   
     }
-
    
     /******************************************************************
      * 0-1の乱数n個の和がtを超える確率を計算する
@@ -205,27 +166,6 @@ public class ThreatEvaluator {
 
 	
 	    
-    /**
-     *  アクションコマンド
-     */
-     
 
-    // 移動アクション
-	public void progOne(Tank tank, double x, double y) {
-		tank. resetAct();
-    	while(tank.activity() > 4) {
-    		tank.move(x,y);
-    	}
-		
-	}
-
-    // 退避アクション
-	public void escapeOne(Tank tank, Tank teki) {
-		tank. resetAct();
-    	while(tank.activity() > 4) {
-    		tank.escape(teki);
-    	}
-		
-	}
 }
 	

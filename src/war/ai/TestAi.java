@@ -36,8 +36,7 @@ public class TestAi {
 	    /** 敵AI担当 */
 	    final EnemyAI2 enemyAI2 = new EnemyAI2(19);;
 	    
-	    
-		
+	    		
         tanks.clear();
         tanks.add(new Tiger(     "タイガー",       FREND_SIDE, 9,  3));
         tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 3,  16));

@@ -70,7 +70,7 @@ public abstract class Tank {
             return -1;
         }
 
-        System.out.println(this.name + "が" + target.getName() + "を攻撃！");
+        System.out.print(this.name + "が" + target.getName() + "を攻撃！  ");
         this.ammo--;												//弾消費
         
         // 命中判定
@@ -277,9 +277,12 @@ public abstract class Tank {
 	     
 		double p = HitRate(target);
 	     
-         System.out.println("命中率: " + p *100 +"%");
-	     
-         if (Math.random() < p) return true;
+//         System.out.print("命中率: " + p *100 +"%");
+	     double pp = Math.random();
+//         System.out.println(", 乱数: " + pp *100 +"%");
+         if (pp < p) {        	 
+        	 return true;
+         }
 		 return false;
 		 	 
 		}	

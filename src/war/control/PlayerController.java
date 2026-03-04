@@ -267,9 +267,9 @@ public class PlayerController {
     /** アクションログ出力（デバッグ用） */
     private void logAction(String action) {
         if (controlledTank != null) {
-            System.out.println("[Player] " + controlledTank.getName()
-                + " → " + action
-                + " (残行動力: " + controlledTank.activity() + ")");
+//            System.out.println("[Player] " + controlledTank.getName()
+//                + " → " + action
+//                + " (残行動力: " + controlledTank.activity() + ")");
         }
     }
 }
