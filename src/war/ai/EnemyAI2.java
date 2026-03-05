@@ -239,64 +239,16 @@ public class EnemyAI2 {
 
     // 退避アクション
 	public void escapeOne(Tank tank, Tank teki) {
-    	int initAct = tank.activity();
     	
         for (int i= 0; i < 4 ; i++ ) {
-        	if(tank.activity() > 0 && tank.getX() > 0 && tank.getX() < MAX_GRID  && tank.getY() > 0 && tank.getY() < MAX_GRID ) {
-    			tank.escape(teki);
+        	if(tank.activity() > 0 ) {
+        		tank.escape(teki, MAX_GRID);
     		} else {
     			break;
     		}
         }
         
-        if (initAct - tank.activity() < 4 && tank.activity() > 0) {		// 追い詰められた時
-    		if (tank.getX() == 0 || tank.getX() == MAX_GRID) { 			// 左右端にいる場合
-                if (teki.getY() == tank.getY()) {							// 相手と同じ縦位置なら、Y方向に広い方に逃げる
-                	if (tank.getY() < MAX_GRID/2 ) {
-                		for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
-                			tank.move(tank.getX(), MAX_GRID);
-                		}
-                	} else {
-                		for (int i = 0 ; i < 4 - (initAct - tank.activity()); i++) {
-                			tank.move(tank.getX(), 0 );
-                		}
-                	}
-                } else {													//　そうでないなら相手から遠ざかるY方向
-            		if (teki.getY() < tank.getY()) {
-            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
-            				tank.move(tank.getX(), MAX_GRID);
-            			}
-            		} else {
-            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
-            				tank.move(tank.getX(), 0);
-            			}            			
-            		}
-                }
-    		} else {
-                if (teki.getX() == tank.getX()) {							// 相手と同じ横位置なら、X方向に広い方に逃げる
-                	if (tank.getY() < MAX_GRID/2 ) {
-                		for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
-                			tank.move(MAX_GRID, tank.getY());
-                		}
-                	} else {
-                		for (int i = 0 ; i < 4 - (initAct - tank.activity()); i++) {
-                			tank.move(0, tank.getY());
-                		}
-                	}
-                } else {													//　そうでないなら相手から遠ざかるX方向
-            		if (teki.getY() < tank.getY()) {
-            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
-            				tank.move(MAX_GRID, tank.getY());
-            			}
-            		} else {
-            			for (int i = 0 ; i < 4 - (initAct - tank.activity()) ; i++) {
-            				tank.move(0, tank.getY());
-            			}            			
-            		}
-                }
-    		}
-    	}
-	}
+    }
 
     /** デバッグ用ログ出力 */
     private void log(Tank self, String msg) {

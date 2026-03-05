@@ -19,7 +19,8 @@ package war.control;
 //======================================================================
 
 import java.util.ArrayList;
-import war.ai.EnemyAI;
+
+import war.ai.EnemyAI2;
 import war.tank.Tank;
 
 /**
@@ -39,8 +40,11 @@ public class PlayerAI implements TankController {
     /** 敵戦車リスト（攻撃対象） */
     private ArrayList<Tank> enemies;
 
+    /** 友軍リスト */
+    private ArrayList<Tank> friendries;
+
     /** AI ロジック（EnemyAI を流用） */
-    private final EnemyAI aiLogic;
+    private final EnemyAI2 aiLogic;
 
     // ======================================================================
     // コンストラクタ
@@ -50,7 +54,7 @@ public class PlayerAI implements TankController {
      * @param gridSize グリッドのマス数（例: 20）
      */
     public PlayerAI(int gridSize) {
-        this.aiLogic = new EnemyAI(gridSize - 1);
+        this.aiLogic = new EnemyAI2(gridSize - 1);
     }
 
     // ======================================================================
@@ -72,8 +76,9 @@ public class PlayerAI implements TankController {
      *
      * @param enemies 攻撃対象の敵戦車リスト
      */
-    public void setEnemies(ArrayList<Tank> enemies) {
+    public void setTankList(ArrayList<Tank> enemies, ArrayList<Tank> friendries) {
         this.enemies = enemies;
+        this.friendries = friendries;
     }
 
     @Override
@@ -89,7 +94,9 @@ public class PlayerAI implements TankController {
 
         // EnemyAI のロジックを流用して行動
         System.out.println("[PlayerAI] " + controlledTank.getName() + " の自動操作開始");
-        int result = aiLogic.takeTurn(controlledTank, enemies);
+
+//        int result = aiLogic.takeTurn(controlledTank, enemies);              //EnemyAIの場合        
+        int result = aiLogic.takeTurn(controlledTank, enemies, friendries);
 
         // 行動終了（行動力リセットは TankBattleGame 側で行う）
         return result;

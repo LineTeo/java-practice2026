@@ -144,12 +144,12 @@ public abstract class Tank {
     }
 
     // 退避ソッド　相手から離れる方向に逃げる
-    public int  escape(Tank teki) {
+    public int  escape(Tank teki, int MAX_GRID) {
         if (!this.isAlive || this.activePoint < MOV_CST ) return -1;
         //敵から離れる方向を判断
         
-        double escTgtX = this.x - (teki.getX() - this.x) ;
-        double escTgtY = this.y - (teki.getY() - this.y) ;
+        double escTgtX = clamp(this.x - (teki.getX() - this.x), 0, MAX_GRID ) ;
+        double escTgtY = clamp(this.x - (teki.getX() - this.x), 0, MAX_GRID ) ; ;
         
         this.move(escTgtX, escTgtY);
                 
@@ -343,6 +343,10 @@ public abstract class Tank {
         return Long.hashCode(serialNo);
     }
 
-    
+    /** 値を [min, max] の範囲にクランプする */
+    private double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+     
 
 }

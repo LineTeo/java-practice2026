@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -29,15 +30,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import war.ai.EnemyAI2;
+import war.control.PlayerAI;
 import war.control.PlayerController;
-import war.tank.HeavyTank;
-import war.tank.MediumTank;
 import war.tank.Tank;
 import war.tank.Tiger;
 
@@ -75,11 +76,19 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
     /** プレイヤー操作担当（Controller） */
     private final PlayerController playerController;
+    /** プレイヤー操作AI ） */
+    private final PlayerAI playerAI;
+//    private boolean isPlayerTurn = true;    //　true でプレーヤー側hは人が操作
+    private boolean isPlayerTurn = false;    //　false でプレーヤー側もコンピュータ操作
 
+    
     /** 敵AI担当 */
 //    private final EnemyAI enemyAI;
      private final EnemyAI2 enemyAI2;
 
+     ArrayList<Tank> friendlies;
+     ArrayList<Tank> enemyes;
+     
     // ======================================================================
     // コンストラクタ
     // ======================================================================
@@ -94,11 +103,15 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         // 各コンポーネントを生成
         renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
         playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
-        enemyAI2          = new EnemyAI2(GRID_SIZE - 1);
+        enemyAI2         = new EnemyAI2(GRID_SIZE - 1);
+        playerAI         = new PlayerAI(GRID_SIZE - 1);  
 
         tanks = new ArrayList<>();
-        startGame();
 
+        startGame();  //戦車の生成と配置
+
+        // プレイヤー戦車を PlayerAI にセット
+        playerAI.setControlledTank(tanks.get(0)); 
         // プレイヤー戦車を PlayerController に設定
         playerController.setControlledTank(tanks.get(0));
     }
@@ -110,9 +123,10 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     private void startGame() {
         tanks.clear();
         tanks.add(new Tiger(     "タイガー",      FREND_SIDE,  3,  3));
-        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 16,  3));
-        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
-        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
+//        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 16,  3));
+//        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
+//        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
+        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
         selectedIndex = 0;
         
         
@@ -133,13 +147,18 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         renderer.drawAllTanks(g2d, tanks, selectedIndex);
         renderer.drawInfoPanel(g2d, playerController.getControlledTank(), INFO_HEIGHT);
     }
-
+//***************************************************************************
+//  イベントハンドラ
+//    
+//***************************************************************************
+    
     // ======================================================================
     // キーボード入力 — PlayerController へ委譲
     // ======================================================================
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (!isPlayerTurn) return;  							// ← AIターン中は無視
         int key = e.getKeyCode();
 
         // スペースキー: ターン終了
@@ -162,6 +181,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if (!isPlayerTurn) return;  							// ← AIターン中は無視
         boolean handled = playerController.handleMouseClick(
             e.getX(), e.getY(), tanks);
 
@@ -185,12 +205,17 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
      * 確認ダイアログ後、敵戦車を順に EnemyAI に行動させる。
      */
     private void endPlayerTurn() {
-        int confirm = JOptionPane.showConfirmDialog(
-            this, "ターン終了しますか？", "ターン終了", JOptionPane.YES_NO_OPTION);
+/*        int confirm = JOptionPane.showConfirmDialog(
+        	getParentFrame(), "ターン終了しますか？", "ターン終了", JOptionPane.YES_NO_OPTION);
+*/
+    	int confirm = showConfirmDialog("ターン終了しますか？", "ターン終了", JOptionPane.YES_NO_OPTION);
+
         if (confirm != JOptionPane.YES_OPTION) return;
 
-        ArrayList<Tank> friendlies = getFriendlyTanks();
-        ArrayList<Tank> enemyes = getEnemyTanks();
+
+
+        friendlies = getFriendlyTanks();
+        enemyes = getEnemyTanks();
 
         // 敵戦車を順に行動させる
         for (int i = 1; i < tanks.size(); i++) {
@@ -205,20 +230,35 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
             if (gameEndChk() == 1) return;
 
-            JOptionPane.showConfirmDialog(
-                this,
+ /*           JOptionPane.showConfirmDialog(
+            	getParentFrame(),
                 enemy.getName() + " の行動終了",
                 "確認",
                 JOptionPane.DEFAULT_OPTION
-            );
+            );*/
+            showConfirmDialog(enemy.getName() + " の行動終了","確認",JOptionPane.DEFAULT_OPTION);
         }
+            
 
         // プレイヤーターン開始
-        selectedIndex = 0;
-        Tank playerTank = tanks.get(selectedIndex);
-        playerTank.resetAct();
-        playerController.setControlledTank(playerTank);
-        repaint();
+ 
+        if (isPlayerTurn) {
+        	selectedIndex = 0;
+        	Tank playerTank = tanks.get(selectedIndex);
+        	playerTank.resetAct();
+        	playerController.setControlledTank(playerTank);
+        	repaint();
+        } else {
+        	startPlayerAITurn();
+        	/*
+            friendlies = getFriendlyTanks();
+            enemyes = getEnemyTanks();
+            playerAI.setEnemies(enemyes); 
+
+            playerAI.takeTurn();       	
+        	repaint();
+        	*/
+        }
     }
 
     // ======================================================================
@@ -256,7 +296,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
                                         : "敵を殲滅しました。勝利です!!";
             Object[] options = { "再プレイ", "終了" };
             int result = JOptionPane.showOptionDialog(
-                this, msg, "ゲーム終了",
+            	getParentFrame(), msg, "ゲーム終了",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
                 null, options, options[0]);
 
@@ -272,7 +312,23 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         }
         return 0;
     }
+    
+    private JFrame getParentFrame() {
+        return (JFrame) SwingUtilities.getWindowAncestor(this);
+    }
+    
+    //　フロートダイアログヘルパー
+    private int showConfirmDialog(String message, String title, int optionType) {
+        JOptionPane pane = new JOptionPane(message, JOptionPane.QUESTION_MESSAGE, optionType);
+        JDialog dialog = pane.createDialog(getParentFrame(), title);
 
+        Point p = getLocationOnScreen();
+        dialog.setLocation(p.x + PANEL_WIDTH + 10, p.y);
+        dialog.setVisible(true);
+
+        Object result = pane.getValue();
+        return (result == null) ? JOptionPane.CLOSED_OPTION : (Integer) result;
+    }
     // ======================================================================
     // 未使用リスナーメソッド
     // ======================================================================
@@ -299,6 +355,19 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
             frame.setVisible(true);
             game.requestFocusInWindow();
             System.out.println("=== ゲーム開始 ===");
+           
+            game.startPlayerAITurn();             
         });
     }
-}
+    public void startPlayerAITurn() {
+    	if(isPlayerTurn) return;
+        friendlies = getFriendlyTanks();
+        enemyes = getEnemyTanks();
+        playerAI.setTankList(enemyes,friendlies); 
+        playerAI.takeTurn();
+        repaint();
+        friendlies.get(0).resetAct();
+        // 終わったら敵ターンへ、または次のサイクルへ
+        endPlayerTurn();
+    }
+ }
