@@ -36,8 +36,12 @@ public class EnemyAI2 {
     /** グリッドの最大座標（端の判定に使用） */
     private final int MAX_GRID;
 
+    public enum Side {
+        PLAYER,
+        PC
+    }
     
-
+    private Side playSide;
     // ======================================================================
     // コンストラクタ
     // ======================================================================
@@ -45,14 +49,18 @@ public class EnemyAI2 {
     /**
      * @param maxGrid グリッドサイズ - 1（例: 19）
      */
-    public EnemyAI2(int maxGrid) {
+    public EnemyAI2(int maxGrid ,Side activeSide) {
         this.MAX_GRID = maxGrid;
+        this.playSide = activeSide;
     }
 
     // ======================================================================
     // 公開メソッド
     // ======================================================================
 
+    
+    
+    
     /**
      * 敵戦車 1 両の 1 ターン分の行動を実行する。
      * HP フェーズに応じて戦術を動的に切り替える。
@@ -68,9 +76,10 @@ public class EnemyAI2 {
          * targets 		攻撃対象戦車群（プレーヤー側。まだ1台を想定しているが一応リスト）
          * friendss 		味方戦車群（コンピュータ側）
          *
-         */	    
-	    
-	    AIConfig aiConfig = new AIConfig();
+         */	
+    	
+		AIConfig aiConfig = new AIConfig();
+    	
     	if (!self.isAlive()) return 0;
         Tank target = selectTarget(self, targets);
         if (target == null) return 0;
@@ -83,10 +92,10 @@ public class EnemyAI2 {
         DummyTank cloneSelf = new DummyTank(self);
         BattleState cloneStat = getstat.analyze(cloneSelf, target, friends, targets, 1);
 
-        
-    	// フローチャートの実装	
-        ThreatEvaluator dec = new ThreatEvaluator(aiConfig, stat);
-        //　1.ゾーン判断
+		// フローチャートの実装	
+    	ThreatEvaluator dec = new ThreatEvaluator(aiConfig, stat);
+
+    		//　1.ゾーン判断
         //　1.1 AC DC 算出
         
         double AC1 = dec.calcAC(ThreatEvaluator.Times.SINGLE, self, target);
@@ -157,6 +166,7 @@ public class EnemyAI2 {
     	        ret = "P9 ESC,REP";
     		}
     	} else if(self.getHp() < self.getMaxHp()){
+    		self.reloadAmmo(self.getMaxAmmo()-self.getAmmo());
     		self.repair();
 	        ret = "ETC1";
     		

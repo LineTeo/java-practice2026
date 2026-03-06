@@ -103,7 +103,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         // 各コンポーネントを生成
         renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
         playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
-        enemyAI2         = new EnemyAI2(GRID_SIZE - 1);
+        enemyAI2         = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PC);
         playerAI         = new PlayerAI(GRID_SIZE - 1);  
 
         tanks = new ArrayList<>();
@@ -249,6 +249,10 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         	playerController.setControlledTank(playerTank);
         	repaint();
         } else {
+            if (gameEndChk() == 1) return;       	
+            selectedIndex = 0;
+            playerAI.setControlledTank(tanks.get(selectedIndex));
+            tanks.get(selectedIndex).resetAct();
         	startPlayerAITurn();
         	/*
             friendlies = getFriendlyTanks();
@@ -259,6 +263,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         	repaint();
         	*/
         }
+        if (gameEndChk() == 1) return;
     }
 
     // ======================================================================
@@ -302,9 +307,15 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
             if (result == 0) {
                 startGame();
-                playerController.setControlledTank(tanks.get(0));
+                if (isPlayerTurn) {
+                	playerController.setControlledTank(tanks.get(0));
+                } else {
+                	playerAI.setControlledTank(tanks.get(0));
+                	
+                }
                 repaint();
                 requestFocusInWindow();
+                startPlayerAITurn();             
             } else {
                 System.exit(0);
             }

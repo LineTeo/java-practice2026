@@ -54,7 +54,7 @@ public class PlayerAI implements TankController {
      * @param gridSize グリッドのマス数（例: 20）
      */
     public PlayerAI(int gridSize) {
-        this.aiLogic = new EnemyAI2(gridSize - 1);
+        this.aiLogic = new EnemyAI2(gridSize - 1,EnemyAI2.Side.PLAYER);
     }
 
     // ======================================================================
