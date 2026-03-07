@@ -262,13 +262,11 @@ public abstract class Tank {
 	
 
 	public double normalDamage(Tank target) {  //基準与ダメージ（ランダム要素を含まない）
-		final double atackRange = 20.0;
-		final double baranceParam = 0.5;
-		return  Math.pow((atackRange - distance(target)) , 2.0) * this.attack * baranceParam;
+		final double atackRange = this.MAX_RNG * 1.5;
+		return  Math.pow((atackRange - distance(target)) , 2.0) * (this.attack / (50-target.getDefense()));
 	}
 	
 	private int damage(Tank target) {	//ランダム要素を加味し、実際に攻撃で与えるダメージ返すメソッド
-		
 		
   		return (int)( normalDamage(target)*((1-this.rRate) + 2 / 3 * this.rRate *( Math.random()+ Math.random()+ Math.random()))); 
 	}
@@ -277,7 +275,7 @@ public abstract class Tank {
 	     
 		double p = HitRate(target);
 	     
-//         System.out.print("命中率: " + p *100 +"%");
+         System.out.print("命中率: " + p *100 +"%");
 	     double pp = Math.random();
 //         System.out.println(", 乱数: " + pp *100 +"%");
          if (pp < p) {        	 
