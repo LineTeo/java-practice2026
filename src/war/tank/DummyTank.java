@@ -9,6 +9,7 @@ public class DummyTank extends Tank {
 		      original.getMaxHp(),
 		      original.getAttack(),
 		      original.getDefense(),
+		      original.getSpeed(),
 		      original.getX(),
 		      original.getY());
 

@@ -93,7 +93,7 @@ public class PlayerAI implements TankController {
         }
 
         // EnemyAI のロジックを流用して行動
-        System.out.println("[PlayerAI] " + controlledTank.getName() + " の自動操作開始");
+//        System.out.println("[PlayerAI] " + controlledTank.getName() + " の自動操作開始");
 
 //        int result = aiLogic.takeTurn(controlledTank, enemies);              //EnemyAIの場合        
         int result = aiLogic.takeTurn(controlledTank, enemies, friendries);

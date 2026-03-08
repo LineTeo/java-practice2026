@@ -39,6 +39,9 @@ import javax.swing.SwingUtilities;
 import war.ai.EnemyAI2;
 import war.control.PlayerAI;
 import war.control.PlayerController;
+import war.tank.HeavyTank;
+import war.tank.LightTank;
+import war.tank.MediumTank;
 import war.tank.Tank;
 import war.tank.Tiger;
 
@@ -76,6 +79,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
     /** プレイヤー操作担当（Controller） */
     private final PlayerController playerController;
+ 
     /** プレイヤー操作AI ） */
     private final PlayerAI playerAI;
 //    private boolean isPlayerTurn = true;    //　true でプレーヤー側hは人が操作
@@ -103,7 +107,11 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         // 各コンポーネントを生成
         renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
         playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
-        enemyAI2         = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PC);
+        if (isPlayerTurn) {
+        	enemyAI2         = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PLAYER);
+        } else {
+        	enemyAI2         = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PC);
+        }
         playerAI         = new PlayerAI(GRID_SIZE - 1);  
 
         tanks = new ArrayList<>();
@@ -123,10 +131,10 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     private void startGame() {
         tanks.clear();
         tanks.add(new Tiger(     "タイガー",      FREND_SIDE,  3,  3));
-//        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 16,  3));
-//        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
-//        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
-        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
+        tanks.add(new LightTank("シャーマン１号", ENEMY_SIDE, 16,  3));
+        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
+        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
+//        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
         selectedIndex = 0;
         
         

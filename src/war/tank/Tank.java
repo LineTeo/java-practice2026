@@ -33,7 +33,7 @@ public abstract class Tank {
 
     
     // コンストラクタ
-    public Tank(String name, int jinei, int hp, int attack, int defense, double x, double y) {
+    public Tank(String name, int jinei, int hp, int attack, int defense,double speed, double x, double y) {
         this.name = name;
         this.hp = hp;
         this.maxHp = hp;
@@ -41,9 +41,9 @@ public abstract class Tank {
         this.MAX_RNG = 12;
         this.AHD = 2;
         this.defense = defense;
+        this.speed = speed;
         this.x = x;
         this.y = y;
-        this.speed = 1.0;
         this.angle = 0;
         this.ammo = 50;
         this.maxAmmo =50;
@@ -70,17 +70,17 @@ public abstract class Tank {
             return -1;
         }
 
-        System.out.print(this.name + "が" + target.getName() + "を攻撃！  ");
+//        System.out.print(this.name + "が" + target.getName() + "を攻撃！  ");
         this.ammo--;												//弾消費
         
         // 命中判定
         if (meichu(target)){
-        	System.out.println("命中" + target.getName() + "を攻撃！");
+//        	System.out.println("命中");
             // ダメージ計算（攻撃力 - 相手の防御力）
 //            int damage = Math.max(1, this.attack - target.getDefense());
             target.takeDamage(damage(target));
         } else {
-            System.out.println("はずれ");        	
+//            System.out.println("はずれ");        	
         }
         this.activePoint -= ATC_CST;
         return 0;
@@ -90,7 +90,7 @@ public abstract class Tank {
     // ダメージを受けるメソッド
     public void takeDamage(int damage) {
         this.hp -= damage;
-        System.out.println(this.name + "は" + damage + "のダメージを受けた！（残りHP: " + this.hp + "）");
+//        System.out.println(this.name + "は" + damage + "のダメージを受けた！（残りHP: " + this.hp + "）");
         
         if (this.hp <= 0) {
             this.hp = 0;
@@ -193,7 +193,7 @@ public abstract class Tank {
     public int reloadAmmo(int amount) {
         if (!this.isAlive || this.activePoint < CHG_CST ) return -1;
         this.ammo += amount;
-        System.out.println(this.name + "が弾薬補給！（弾薬: " + this.ammo + "）");
+//        System.out.println(this.name + "が弾薬補給！（弾薬: " + this.ammo + "）");
         this.activePoint -= CHG_CST;
         return 0;
     }
@@ -263,7 +263,7 @@ public abstract class Tank {
 
 	public double normalDamage(Tank target) {  //基準与ダメージ（ランダム要素を含まない）
 		final double atackRange = this.MAX_RNG * 1.5;
-		return  Math.pow((atackRange - distance(target)) , 2.0) * (this.attack / (50-target.getDefense()));
+		return  Math.pow((atackRange - distance(target)) , 2.0) * (this.attack / (50+target.getDefense()));
 	}
 	
 	private int damage(Tank target) {	//ランダム要素を加味し、実際に攻撃で与えるダメージ返すメソッド
@@ -275,7 +275,7 @@ public abstract class Tank {
 	     
 		double p = HitRate(target);
 	     
-         System.out.print("命中率: " + p *100 +"%");
+//         System.out.print("命中率: " + p *100 +"%");
 	     double pp = Math.random();
 //         System.out.println(", 乱数: " + pp *100 +"%");
          if (pp < p) {        	 

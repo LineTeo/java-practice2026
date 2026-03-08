@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import war.ai.EnemyAI2;
 import war.control.PlayerAI;
+import war.tank.HeavyTank;
 import war.tank.LightTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
@@ -65,7 +66,7 @@ public class BattleSimulator {
 
     public BattleSimulator() {
         playerAI = new PlayerAI(GRID_SIZE - 1);
-        enemyAI2 = new EnemyAI2(GRID_SIZE - 1);
+        enemyAI2 = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PC);
         tanks    = new ArrayList<>();
     }
 
@@ -141,8 +142,15 @@ public class BattleSimulator {
                 BattleResult result = runGame();
                 pw.println(result.toCsvRow(i));
 
-                if      (result.winner == FREND_SIDE) friendWins++;
-                else if (result.winner == ENEMY_SIDE) enemyWins++;
+                if      (result.winner == FREND_SIDE) {
+                	friendWins++;
+                    System.out.println("試合完了 / 友軍勝利");
+          
+                }
+                else if (result.winner == ENEMY_SIDE) {
+                	enemyWins++;
+                System.out.println("試合完了 / 敵軍勝利");
+                }
                 else                                  draws++;
 
                 // 進捗表示（1000試合ごと）
@@ -173,9 +181,9 @@ public class BattleSimulator {
         tanks.add(new Tiger("タイガー", FREND_SIDE,  3,  3));
 //        tanks.add(new Tiger("ライオン", ENEMY_SIDE, 16, 16));
         tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 16,  3));
-//      tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
-        tanks.add(new LightTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
-        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
+      tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  16, 3));
+        tanks.add(new LightTank( "シャーマン３号", ENEMY_SIDE,  3, 16));
+//        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
 
         // PlayerAI に操作対象を設定
         playerAI.setControlledTank(tanks.get(0));

@@ -107,9 +107,9 @@ public class EnemyAI2 {
         double AT1 = dec.calcAT(ThreatEvaluator.Times.SINGLE, cloneSelf, target);
         double AT2 = dec.calcAT(ThreatEvaluator.Times.DOUBLE, cloneSelf, target);
         double DT1 = dec.calcDT(ThreatEvaluator.Times.SINGLE, cloneSelf, target);
-        double DT2 = dec.calcDT(ThreatEvaluator.Times.DOUBLE, cloneSelf, target);        
+        double DT2 = dec.calcDT(ThreatEvaluator.Times.DOUBLE, cloneSelf, target);
 
-        System.out.printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",AC1,AC2,DC1,DC2,AT1,AT2,DT1,DT2);
+//        System.out.printf("%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",AC1,AC2,DC1,DC2,AT1,AT2,DT1,DT2);
 
 
         
@@ -262,7 +262,7 @@ public class EnemyAI2 {
 
     /** デバッグ用ログ出力 */
     private void log(Tank self, String msg) {
-        System.out.println("[AI] " + self.getName()  + msg + " → " + self.getX() +", "+self.getY());
+//        System.out.println("[AI] " + self.getName()  + msg + " → " + self.getX() +", "+self.getY());
     }
 
 }

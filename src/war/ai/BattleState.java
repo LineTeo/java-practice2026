@@ -52,13 +52,15 @@ public class BattleState {
     @Override
     public String toString() {
         return String.format(
-            "BattleState\n" + 
+/*            "BattleState\n" + 
             "{selfHP=%d/%d(%.0f%%), activity=%d, range=%.1f, ]\n" +
             "{targetHP=%d/%d(%.0f%%), distance=%.1f, angle=%.1f, ]\n" +
             "[targetInRange=%b, rank=%d, allies=%d, turn=%d}",
             selfHP, selfMaxHP, selfHPRatio * 100,selfActivity, selfRange,
             targetHP,targetMaxHP,targetHPRatio * 100 ,targetDistance,targetAngle,
-            targetInRange,distanceRankFromEnemy, allyCount, turnNumber
+            targetInRange,distanceRankFromEnemy, allyCount, turnNumber */
+        	"%d, %.1f, %d",	
+        	selfHP,targetDistance,distanceRankFromEnemy
         );
     }
 }

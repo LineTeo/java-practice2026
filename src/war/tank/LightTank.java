@@ -3,7 +3,7 @@ package war.tank;
 public class LightTank extends Tank {
  
  public LightTank(String name, int jinei, double x, double y) {
-     super(name, jinei, 1500, 400, 10, x, y);
+     super(name, jinei, 1500, 600, 180, 2, x, y);
      typeName();
  }
  
