@@ -58,8 +58,8 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     private static final int FREND_SIDE  = 0;
     private static final int ENEMY_SIDE  = 1;
 
-    private static final int GRID_SIZE   = 20;
-    private static final int CELL_SIZE   = 35;
+    private static final int GRID_SIZE   = 24;
+    private static final int CELL_SIZE   = 30;
     private static final int PANEL_WIDTH = GRID_SIZE * CELL_SIZE;
     private static final int INFO_HEIGHT = 150;
     private static final int PANEL_HEIGHT= PANEL_WIDTH + INFO_HEIGHT;
@@ -82,8 +82,8 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
  
     /** プレイヤー操作AI ） */
     private final PlayerAI playerAI;
-//    private boolean isPlayerTurn = true;    //　true でプレーヤー側hは人が操作
-    private boolean isPlayerTurn = false;    //　false でプレーヤー側もコンピュータ操作
+    private boolean isPlayerTurn = true;    //　true でプレーヤー側hは人が操作
+//    private boolean isPlayerTurn = false;    //　false でプレーヤー側もコンピュータ操作
 
     
     /** 敵AI担当 */
@@ -131,9 +131,9 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     private void startGame() {
         tanks.clear();
         tanks.add(new Tiger(     "タイガー",      FREND_SIDE,  3,  3));
-        tanks.add(new LightTank("シャーマン１号", ENEMY_SIDE, 16,  3));
-        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 16));
-        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
+        tanks.add(new LightTank("シャーマン１号", ENEMY_SIDE, 20,  3));
+        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 20));
+        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 20, 20));
 //        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
         selectedIndex = 0;
         

@@ -98,16 +98,16 @@ public class PlayerController {
 
         switch (keyCode) {
             case KeyEvent.VK_UP:
-                return moveUp();
+                return moveForward();
 
             case KeyEvent.VK_DOWN:
-                return moveDown();
+                return moveBack();
 
             case KeyEvent.VK_LEFT:
-                return moveLeft();
+                return turnLeft();
 
             case KeyEvent.VK_RIGHT:
-                return moveRight();
+                return turnRight();
 
             case KeyEvent.VK_R:
                 return repair();
@@ -167,6 +167,71 @@ public class PlayerController {
     // 移動処理（矢印キー）
     // ======================================================================
 
+	public boolean moveForward() { //前進
+		int t = (int)((controlledTank.getAngle()+15) / 30);
+		double targetX = controlledTank.getX() + Math.sin(t * Math.PI / 6) * 5;
+		double targetY = controlledTank.getY() - Math.cos(t * Math.PI / 6) * 5;			
+		controlledTank.move(targetX, targetY);
+        return true;
+     }
+	
+
+	public boolean moveBack() {    //後退
+		int t = (int)((controlledTank.getAngle()+15) / 30);
+		double targetX = controlledTank.getX() - Math.sin(t * Math.PI / 6) * 5;
+		double targetY = controlledTank.getY() + Math.cos(t * Math.PI / 6) * 5;			
+		controlledTank.move(targetX, targetY);
+        return true;
+     }
+
+
+    
+    /** 前進 */
+    private boolean moveForward_p() {
+    	
+    	int curAng = (int)((controlledTank.getAngle()+45.0)/90) % 4;
+    	
+    	switch (curAng) {
+    	case 0 -> controlledTank.move(controlledTank.getX(), controlledTank.getY() - 10);
+    	case 1 -> controlledTank.move(controlledTank.getX() + 10, controlledTank.getY());
+    	case 2 -> controlledTank.move(controlledTank.getX(), controlledTank.getY() + 10);
+    	case 3 -> controlledTank.move(controlledTank.getX() - 10, controlledTank.getY());
+    	}
+    	
+        return true;
+    	
+    }
+
+    private boolean moveBack_p() {
+    	
+    	int curAng = (int)((controlledTank.getAngle()+45.0)/90) % 4;
+    	
+    	switch (curAng) {
+    	case 0 -> controlledTank.move(controlledTank.getX(), controlledTank.getY() + 10);
+    	case 1 -> controlledTank.move(controlledTank.getX() - 10, controlledTank.getY());
+    	case 2 -> controlledTank.move(controlledTank.getX(), controlledTank.getY() - 10);
+    	case 3 -> controlledTank.move(controlledTank.getX() + 10, controlledTank.getY());
+    	}
+    	
+        return true;
+    	
+    }
+
+    private boolean turnLeft() {
+    	
+    	 controlledTank.rotate(-30) ;
+    	 return true;
+    	
+    }
+
+    private boolean turnRight() {
+    	
+   	 controlledTank.rotate(30) ;
+   	 return true;
+   	
+   }
+
+    
     /** 上方向（Y - 1）へ移動 */
     private boolean moveUp() {
         if (controlledTank.getY() > 0) {

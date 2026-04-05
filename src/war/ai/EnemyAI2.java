@@ -239,24 +239,25 @@ public class EnemyAI2 {
         double nx = clamp(x, 0, MAX_GRID);
         double ny = clamp(y, 0, MAX_GRID);
 
-        for (int i= 0; i < 4 ; i++ ) {
+//        for (int i= 0; i < 1 ; i++ ) {
         	if(tank.activity() > 0 && Math.abs(x - tank.getX()) +Math.abs(y - tank.getY()) > 1.1) {
         		tank.move(nx,ny);        		
         	}
-        }
+//        }
         		
 	}
 
     // 退避アクション
 	public void escapeOne(Tank tank, Tank teki) {
     	
-        for (int i= 0; i < 4 ; i++ ) {
+//        for (int i= 0; i < 1 ; i++ ) {
         	if(tank.activity() > 0 ) {
         		tank.escape(teki, MAX_GRID);
-    		} else {
-    			break;
-    		}
-        }
+    		} 
+        	//else {
+    		//	break;
+    		//}
+//        }
         
     }
 

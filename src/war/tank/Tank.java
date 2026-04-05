@@ -28,8 +28,9 @@ public abstract class Tank {
     final private double rRate = 0.35; 		//ばらつき係数
     protected int REP_CST = 8;	//攻撃時消費行動力
     protected int ATC_CST = 4;	//攻撃時消費行動力
-    protected int CHG_CST = 2;	//補給時消費行動力
-    protected int MOV_CST = 1;	//移動、回転消費行動力
+    protected int CHG_CST = 4;	//補給時消費行動力
+    protected int MOV_CST = 4;	//移動時消費行動力
+    protected int ROT_CST = 1;	//回転時消費行動力
 
     
     // コンストラクタ
@@ -99,8 +100,27 @@ public abstract class Tank {
         }
     }
 
+    // ダメージを受けるメソッド 角度対応版
+    public void takeDamage(int damage,double angle) {
+    	
+    	
+    	this.hp -= damage * angleGain(angle);
+//        System.out.println(this.name + "は" + damage + "のダメージを受けた！（残りHP: " + this.hp + "）");
+        
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.isAlive = false;
+            System.out.println(this.name + "は破壊された！");
+        }
+    }
+    
+    //　角度要素を追加する場合はこれをオーバーライドする
+    public double angleGain(double angle) {
+    	return 1;
+    }
+
     /* 移動メソッド
-     * 目標座標に向けてスピード分移動する
+     * 目標座標に向けて行動力4×スピード分移動する
      * 1回の移動で移動できない場合は途中で止まる。
     */
     public int move(double targetX, double targetY) {
@@ -122,7 +142,7 @@ public abstract class Tank {
 *******************************************/
         
 //		マス目ベースの移動
-        final int count = (int)this.speed;
+        final int count = (int)(this.speed * MOV_CST);
         for (int i = 0; i < count ; i++) {
         	if (Math.abs(targetX - this.x) >= Math.abs(targetY - this.y)) { // X距離、Ｙ距離の遠い方のマス目を移動
         		if (targetX - this.x >= 0) {
@@ -139,8 +159,17 @@ public abstract class Tank {
         		}
         	}
         }
+
+        
+        
+        
+        
         this.activePoint -= MOV_CST;
         return 0;
+
+    
+    
+    
     }
 
     // 退避ソッド　相手から離れる方向に逃げる
@@ -157,14 +186,14 @@ public abstract class Tank {
     }
 
     
-    // 回転メソッド（砲塔を回す）
+    // 回転メソッド（車体を回す）
     public int  rotate(double degrees) {
     	if (degrees == 0) return 0;
-        if (!this.isAlive || this.activePoint < MOV_CST ) return -1;
+        if (!this.isAlive || this.activePoint < ROT_CST ) return -1;
         
         this.angle = (this.angle + degrees) % 360;
-        System.out.println(this.name + "が砲塔を回転: " + this.angle + "度");
-        this.activePoint -= MOV_CST;
+//        System.out.println(this.name + "が回転: " + this.angle + "度");
+        this.activePoint -= ROT_CST * (int)((Math.abs(degrees) + 1) / 30);
         return 0;
     }
 
