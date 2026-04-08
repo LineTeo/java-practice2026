@@ -210,11 +210,12 @@ public class TankRenderer {
         int helpX = PANEL_WIDTH - 280;
         int helpY = panelY + 20;
 
-        g2d.drawString("【操作】",                              helpX, helpY); helpY += 18;
-        g2d.drawString("矢印キー: 移動　　　必要行動力　１",   helpX, helpY); helpY += 18;
-        g2d.drawString("クリック: 敵を攻撃  必要行動力　４",   helpX, helpY); helpY += 18;
-        g2d.drawString("Ｒ： 修理 　　　　　残存行動力すべて", helpX, helpY); helpY += 18;
-        g2d.drawString("スペース: 行動終了",                   helpX, helpY);
+        g2d.drawString("【操作】",                               helpX, helpY); helpY += 18;
+        g2d.drawString("上下キー: 前進・後退　必要行動力　４",   helpX, helpY); helpY += 18;
+        g2d.drawString("左右キー: 回転（30°）必要行動力　１",   helpX, helpY); helpY += 18;
+        g2d.drawString("クリック: 敵を攻撃  　必要行動力　４",   helpX, helpY); helpY += 18;
+        g2d.drawString("Ｒ： 修理 　　　　　　残存行動力すべて", helpX, helpY); helpY += 18;
+        g2d.drawString("スペース: 行動終了",                     helpX, helpY);
     }
 
     // ======================================================================

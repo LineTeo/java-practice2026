@@ -76,10 +76,10 @@ public abstract class Tank {
         
         // 命中判定
         if (meichu(target)){
-//        	System.out.println("命中");
+        	System.out.println(this.name + "の攻撃が命中");
             // ダメージ計算（攻撃力 - 相手の防御力）
 //            int damage = Math.max(1, this.attack - target.getDefense());
-            target.takeDamage(damage(target));
+            target.takeDamage(damage(target),this.x,this.y);
         } else {
 //            System.out.println("はずれ");        	
         }
@@ -101,16 +101,21 @@ public abstract class Tank {
     }
 
     // ダメージを受けるメソッド 角度対応版
-    public void takeDamage(int damage,double angle) {
+    public void takeDamage(int damage,double fromX, double fromY) {
     	
+    	double currentAngle = this.angle;
+    	double targetAngle = ((450.0 - Math.toDegrees(Math.atan2(-fromY + this.y, fromX - this.x))) % 360.0);
+    	double impactAngle = (targetAngle - currentAngle +360) % 360 ;
     	
-    	this.hp -= damage * angleGain(angle);
-//        System.out.println(this.name + "は" + damage + "のダメージを受けた！（残りHP: " + this.hp + "）");
+    	this.hp -= damage * angleGain(impactAngle);
+//        System.out.println(this.name + "は" + targetAngle + "の方向から攻撃された");
+//        System.out.println(this.name + "の姿勢は" + currentAngle);
+//        System.out.println(this.name + "の命中箇所は" + impactAngle + "の方向");
         
         if (this.hp <= 0) {
             this.hp = 0;
             this.isAlive = false;
-            System.out.println(this.name + "は破壊された！");
+//            System.out.println(this.name + "は破壊された！");
         }
     }
     
@@ -123,7 +128,7 @@ public abstract class Tank {
      * 目標座標に向けて行動力4×スピード分移動する
      * 1回の移動で移動できない場合は途中で止まる。
     */
-    public int move(double targetX, double targetY) {
+    public int move(double targetX, double targetY, int MAX_GRID) {
         if (!this.isAlive || this.activePoint < MOV_CST ) return -1;
 
 /*******************************************
@@ -174,13 +179,13 @@ public abstract class Tank {
 
     // 退避ソッド　相手から離れる方向に逃げる
     public int  escape(Tank teki, int MAX_GRID) {
-        if (!this.isAlive || this.activePoint < MOV_CST ) return -1;
+        if (!this.isAlive) return -1;
         //敵から離れる方向を判断
         
-        double escTgtX = clamp(this.x - (teki.getX() - this.x), 0, MAX_GRID ) ;
-        double escTgtY = clamp(this.x - (teki.getX() - this.x), 0, MAX_GRID ) ; ;
+        double escTgtX = clamp( -(teki.getX() - this.x) * 10 + this.x , 0, MAX_GRID ) ;
+        double escTgtY = clamp( -(teki.getY() - this.y) * 10 + this.y , 0, MAX_GRID ) ; 
         
-        this.move(escTgtX, escTgtY);
+        this.move(escTgtX, escTgtY, MAX_GRID);
                 
         return 0;
     }
@@ -188,13 +193,30 @@ public abstract class Tank {
     
     // 回転メソッド（車体を回す）
     public int  rotate(double degrees) {
+    	
+    /***********	角度について　　************************************
+     *
+     * 		戦車の角度は12時を0度として、時計回りに0<=　<360の範囲で定義
+     * 		原則j30度単位で動かす想定で、行動力も30度ごとに消費される
+     * 
+     *******************************************************************/
+        if (!this.isAlive) return -1;
     	if (degrees == 0) return 0;
-        if (!this.isAlive || this.activePoint < ROT_CST ) return -1;
+    	double rate = 1.0;		////残行動力が不足する場合に行動力の範囲で回転するための係数
+    	
+    	double tempDeg = Math.floorMod((long)degrees + 180, 360) - 180;         //±180度以上の回転を指示された場合は、逆方向に動かす
+    	
+    	int angleCount =  (int)(Math.round(Math.abs(tempDeg) / 30)); 			//目標姿勢を行動力単位（30度単位）で正規化
+    	
+    	if (this.activePoint < Math.abs(angleCount) * ROT_CST) {	//残行動力が不足する場合は行動力の範囲で回転する
+    		rate = this.activePoint / angleCount;
+    		angleCount = this.activePoint;
+    	}
         
-        this.angle = (this.angle + degrees) % 360;
+        this.angle = (this.angle + tempDeg * rate + 360) % 360;		//±180度の範囲で動かし、さらにその角度を0-360の範囲にする
 //        System.out.println(this.name + "が回転: " + this.angle + "度");
-        this.activePoint -= ROT_CST * (int)((Math.abs(degrees) + 1) / 30);
-        return 0;
+        this.activePoint -= angleCount;
+        return angleCount;
     }
 
     // 修理メソッド

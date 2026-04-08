@@ -36,14 +36,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import war.ai.EnemyAI2;
+import war.ai.EnemyAI3;
 import war.control.PlayerAI;
 import war.control.PlayerController;
 import war.tank.HeavyTank;
 import war.tank.LightTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
-import war.tank.Tiger;
+import war.tank.Tiger2;
 
 /**
  * TankBattleGame クラス (ゲームフロー制御 + エントリーポイント)
@@ -88,7 +88,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     
     /** 敵AI担当 */
 //    private final EnemyAI enemyAI;
-     private final EnemyAI2 enemyAI2;
+     private final EnemyAI3 enemyAI2;
 
      ArrayList<Tank> friendlies;
      ArrayList<Tank> enemyes;
@@ -108,9 +108,9 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
         playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
         if (isPlayerTurn) {
-        	enemyAI2         = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PLAYER);
+        	enemyAI2         = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PLAYER);
         } else {
-        	enemyAI2         = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PC);
+        	enemyAI2         = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PC);
         }
         playerAI         = new PlayerAI(GRID_SIZE - 1);  
 
@@ -130,10 +130,10 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
 
     private void startGame() {
         tanks.clear();
-        tanks.add(new Tiger(     "タイガー",      FREND_SIDE,  3,  3));
-        tanks.add(new LightTank("シャーマン１号", ENEMY_SIDE, 20,  3));
-        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  3, 20));
-        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 20, 20));
+        tanks.add(new Tiger2("タイガー",      FREND_SIDE,  3,  3));
+        tanks.add(new LightTank("軽戦車", ENEMY_SIDE, 20,  3));
+        tanks.add(new HeavyTank( "重戦車", ENEMY_SIDE,  3, 20));
+        tanks.add(new MediumTank("中戦車", ENEMY_SIDE, 20, 20));
 //        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
         selectedIndex = 0;
         
