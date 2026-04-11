@@ -228,14 +228,16 @@ public class EnemyAI3 {
 
     // 移動アクション
 	public void progOne(Tank tank, double x, double y) {
-        double nx = clamp(x, 0, MAX_GRID);
-        double ny = clamp(y, 0, MAX_GRID);
+        double nx = clamp(x, 0, MAX_GRID - 1);
+        double ny = clamp(y, 0, MAX_GRID - 1);
         
 // 方向転換 角度は12時が0度とする0～360度で表現することとXY座標は下方向がY+なので、式が以下のようになる
         double curAngle = tank.getAngle();
         double tarAngle = (int)(((450 - Math.toDegrees(Math.atan2(-y + tank.getY(),x - tank.getX()))) % 360 + 15)/30) * 30.0;
         
-        tank.rotate(tarAngle - curAngle);        
+        tank.rotate(tarAngle - curAngle);  
+        
+        // 行動力が残っていて　敵との距離が1マス以上ある場合
         
         if(tank.activity() > 0 && Math.abs(x - tank.getX()) +Math.abs(y - tank.getY()) > 1.1) {
         tank.move(nx,ny);        		
@@ -245,10 +247,25 @@ public class EnemyAI3 {
 
     // 退避アクション
 	public void escapeOne(Tank tank, Tank teki) {
-        if(tank.activity() > 0 ) {
-        	tank.escape(teki, MAX_GRID);
-    	}
-	}
+		if(tank.activity() <= 0 ) return;
+
+    	//退避方向は敵とは逆方向
+        double escWayX = tank.getX() - teki.getX();
+        double escWayY = tank.getY() - teki.getY(); 
+        double nx = clamp(escWayX + tank.getX(), 0, MAX_GRID -1);
+        double ny = clamp(escWayY + tank.getY(), 0, MAX_GRID -1);
+
+		
+		//　敵に正面を向ける = 退避方向とは逆方向なので、180度加算する
+		
+		// 方向転換 角度は12時が0度とする0～360度で表現することとXY座標は下方向がY+なので、式が以下のようになる
+        double curAngle = tank.getAngle();
+        double tarAngle = (int)(((450 - Math.toDegrees(Math.atan2( - escWayY, escWayX)) + 180 ) % 360 + 15)/30) * 30.0;
+        
+        tank.rotate(tarAngle - curAngle);        
+        if(tank.activity() > 0) tank.move(nx,ny);        		
+        	
+    }
 	
     /** デバッグ用ログ出力 */
     private void log(Tank self, String msg) {

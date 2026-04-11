@@ -128,7 +128,7 @@ public abstract class Tank {
      * 目標座標に向けて行動力4×スピード分移動する
      * 1回の移動で移動できない場合は途中で止まる。
     */
-    public int move(double targetX, double targetY, int MAX_GRID) {
+    public int move(double targetX, double targetY) {
         if (!this.isAlive || this.activePoint < MOV_CST ) return -1;
 
 /*******************************************
@@ -148,6 +148,7 @@ public abstract class Tank {
         
 //		マス目ベースの移動
         final int count = (int)(this.speed * MOV_CST);
+        
         for (int i = 0; i < count ; i++) {
         	if (Math.abs(targetX - this.x) >= Math.abs(targetY - this.y)) { // X距離、Ｙ距離の遠い方のマス目を移動
         		if (targetX - this.x >= 0) {
@@ -185,7 +186,7 @@ public abstract class Tank {
         double escTgtX = clamp( -(teki.getX() - this.x) * 10 + this.x , 0, MAX_GRID ) ;
         double escTgtY = clamp( -(teki.getY() - this.y) * 10 + this.y , 0, MAX_GRID ) ; 
         
-        this.move(escTgtX, escTgtY, MAX_GRID);
+        this.move(escTgtX, escTgtY);
                 
         return 0;
     }
