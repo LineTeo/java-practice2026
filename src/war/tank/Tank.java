@@ -76,7 +76,7 @@ public abstract class Tank {
         
         // 命中判定
         if (meichu(target)){
-        	System.out.println(this.name + "の攻撃が命中");
+//        	System.out.println(this.name + "の攻撃が命中");
             // ダメージ計算（攻撃力 - 相手の防御力）
 //            int damage = Math.max(1, this.attack - target.getDefense());
             target.takeDamage(damage(target),this.x,this.y);

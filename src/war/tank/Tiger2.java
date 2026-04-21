@@ -4,11 +4,18 @@ public class Tiger2 extends Tank{
 	//Tiger 前面装甲強化型
 	
 	
+	public Tiger2(String name, int jinei,double x, double y, double angle) {
+		super(name, jinei, 4000, 1000, 200, 1, x, y);
+		// 名前、陣営（敵味方）、耐久力、攻撃力、防御力、速度、位置X、位置Y
+		super.setAngle(angle);
+		typeName();
+	}
 	public Tiger2(String name, int jinei,double x, double y) {
 		super(name, jinei, 4000, 1000, 200, 1, x, y);
 		// 名前、陣営（敵味方）、耐久力、攻撃力、防御力、速度、位置X、位置Y
 		typeName();
 	}
+
 	@Override
 	public void typeName() {
 		super.setType("Tiger2");

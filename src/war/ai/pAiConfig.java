@@ -1,11 +1,11 @@
 package war.ai;
-//脅威評価パラメータ
+//脅威評価パラメータ　プレーヤAI用
 
 public class pAiConfig extends AIConfig{
     // ========================================
     // ゾーン判定 敵からの距離
     // ========================================
-    public double THREAT_ZONE_1 = 0.3;      		// 決戦領域
+    public double THREAT_ZONE_1 = 1.0;      		// 決戦領域
     public double THREAT_ZONE_2 = 0.6;      		// 戦闘領域
     public double THREAT_ZONE_3 = 0.3;      		// 回復領域
     
@@ -21,9 +21,9 @@ public class pAiConfig extends AIConfig{
     public double P05_Z2_CA_AT_1_O = 1.0;
     public double P06_Z2_AA_DC_2_U = 0.3;
     public double P07_Z2_AE_DT_2_U = 0.3;
-    public double P08_Z2_EE_DT_2_O = 0.7;
+    public double P08_Z2_EE_DT_2_O = 4.7;
     public double P10_Z3_CC_DT_2_U = 0.3;
-    public double P11_Z3_CA_DT_2_U = 0.3; 
+    public double P11_Z3_CA_DT_2_U = 0.4; 
     
     // ========================================
     // 距離順位による脅威係数（DC,DTの計算に使用）

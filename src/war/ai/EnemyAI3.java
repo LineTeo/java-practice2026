@@ -25,7 +25,10 @@ public class EnemyAI3 {
     // 定数（戦術パラメータ）
     // ======================================================================
 
-    /** グリッドの最大座標（端の判定に使用） */
+	AIConfig aiConfig;
+	
+	
+	/** グリッドの最大座標（端の判定に使用） */
     private final int MAX_GRID;
 
     public enum Side {
@@ -41,9 +44,15 @@ public class EnemyAI3 {
     /**
      * @param maxGrid グリッドサイズ - 1（例: 19）
      */
+    public EnemyAI3(int maxGrid ,Side activeSide, AIConfig aiConfig) {
+        this.MAX_GRID = maxGrid;
+        this.playSide = activeSide;
+        this.aiConfig = aiConfig;
+    }
     public EnemyAI3(int maxGrid ,Side activeSide) {
         this.MAX_GRID = maxGrid;
         this.playSide = activeSide;
+        this.aiConfig = new AIConfig();
     }
 
     // ======================================================================
@@ -70,7 +79,7 @@ public class EnemyAI3 {
          *
          */	
     	
-		AIConfig aiConfig = new AIConfig();
+//		AIConfig aiConfig = new AIConfig();
     	
     	if (!self.isAlive()) return 0;
         Tank target = selectTarget(self, targets);

@@ -82,7 +82,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
  
     /** プレイヤー操作AI ） */
     private final PlayerAI playerAI;
-    private boolean isPlayerTurn = true;    //　true でプレーヤー側hは人が操作
+    private boolean isPlayerTurn = false;    //　true でプレーヤー側hは人が操作
 //    private boolean isPlayerTurn = false;    //　false でプレーヤー側もコンピュータ操作
 
     

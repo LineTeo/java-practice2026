@@ -20,7 +20,8 @@ package war.control;
 
 import java.util.ArrayList;
 
-import war.ai.EnemyAI2;
+import war.ai.EnemyAI3;
+import war.ai.pAiConfig;
 import war.tank.Tank;
 
 /**
@@ -44,7 +45,7 @@ public class PlayerAI implements TankController {
     private ArrayList<Tank> friendries;
 
     /** AI ロジック（EnemyAI を流用） */
-    private final EnemyAI2 aiLogic;
+    private final EnemyAI3 aiLogic;
 
     // ======================================================================
     // コンストラクタ
@@ -54,7 +55,8 @@ public class PlayerAI implements TankController {
      * @param gridSize グリッドのマス数（例: 20）
      */
     public PlayerAI(int gridSize) {
-        this.aiLogic = new EnemyAI2(gridSize - 1,EnemyAI2.Side.PLAYER);
+    	pAiConfig aiConfig = new pAiConfig();
+        this.aiLogic = new EnemyAI3(gridSize - 1,EnemyAI3.Side.PLAYER, aiConfig);
     }
 
     // ======================================================================
