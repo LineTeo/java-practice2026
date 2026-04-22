@@ -24,13 +24,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import war.ai.EnemyAI2;
+import war.ai.EnemyAI3;
 import war.control.PlayerAI;
-import war.tank.HeavyTank;
 import war.tank.LightTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
-import war.tank.Tiger;
+import war.tank.Tiger2;
 
 /**
  * ヘッドレス対戦シミュレーター。
@@ -58,7 +57,7 @@ public class BattleSimulator {
     private final PlayerAI playerAI;
 
     /** 敵側AI */
-    private final EnemyAI2 enemyAI2;
+    private final EnemyAI3 enemyAI2;
 
     // ======================================================================
     // コンストラクタ
@@ -66,7 +65,7 @@ public class BattleSimulator {
 
     public BattleSimulator() {
         playerAI = new PlayerAI(GRID_SIZE - 1);
-        enemyAI2 = new EnemyAI2(GRID_SIZE - 1,EnemyAI2.Side.PC);
+        enemyAI2 = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PC);
         tanks    = new ArrayList<>();
     }
 
@@ -178,12 +177,12 @@ public class BattleSimulator {
     /** ゲームを初期化（戦車を生成・配置） */
     private void initGame() {
         tanks.clear();
-        tanks.add(new Tiger("タイガー", FREND_SIDE,  3,  3));
-//        tanks.add(new Tiger("ライオン", ENEMY_SIDE, 16, 16));
+        tanks.add(new Tiger2("タイガー", FREND_SIDE,  3,  3));
+//        tanks.add(new Tiger2("ライオン", ENEMY_SIDE, 16, 16));
         tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 16,  3));
-      tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE,  16, 3));
+//        tanks.add(new HeavyTank( "シャーマン２号", ENEMY_SIDE, 16,  3));
         tanks.add(new LightTank( "シャーマン３号", ENEMY_SIDE,  3, 16));
-//        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
+        tanks.add(new MediumTank("シャーマン３号", ENEMY_SIDE, 16, 16));
 
         // PlayerAI に操作対象を設定
         playerAI.setControlledTank(tanks.get(0));
@@ -296,12 +295,12 @@ public class BattleSimulator {
         BattleSimulator sim = new BattleSimulator();
 
         // 単発テスト
-        System.out.println("--- 単発テスト ---");
-        BattleResult result = sim.runGame();
-        System.out.println(result);
+//        System.out.println("--- 単発テスト ---");
+//        BattleResult result = sim.runGame();
+//        System.out.println(result);
 
         // バッチ実行（1000試合）
         System.out.println();
-        sim.runBatch(1000, "battle_results.csv");
+        sim.runBatch(10000, "battle_results.csv");
     }
 }

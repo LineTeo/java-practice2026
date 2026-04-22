@@ -67,7 +67,7 @@ public abstract class Tank {
     // 攻撃メソッド
     public int attackTarget(Tank target) {
         if (!this.isAlive  || this.activePoint < ATC_CST || this.ammo <= 0) { 						//弾切れ、または相手が死んでるときは除外
-            System.out.println(this.name + "は攻撃できません！");
+//            System.out.println(this.name + "は攻撃できません！");
             return -1;
         }
 

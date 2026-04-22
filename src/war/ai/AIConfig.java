@@ -7,7 +7,7 @@ public class AIConfig {
     // ========================================
     public double THREAT_ZONE_1 = 0.3;      		// 決戦領域
     public double THREAT_ZONE_2 = 0.6;      		// 戦闘領域
-    public double THREAT_ZONE_3 = 0.3;      		// 回復領域
+//    public double THREAT_ZONE_3 = 0.4;      		// 回復領域 実際は戦闘領域外は回復領域なので、パラメータは未使用
     
     // ========================================
     // AC DC AT DTの閾値パラメータ
@@ -35,19 +35,19 @@ public class AIConfig {
     
     
     
-    // 以下は現時点では使わない予定
+    // 以下は現時点では使わない
     
     // ========================================
     // 距離評価パラメータ
     // ========================================
-    public double OPTIMAL_RANGE_MIN = 0.5;           // 最適射程下限（射程の50%）
-    public double OPTIMAL_RANGE_MAX = 0.7;           // 最適射程上限（射程の70%）
-    public double DANGER_RANGE = 0.3;                // 危険距離（射程の30%以内）
+//    public double OPTIMAL_RANGE_MIN = 0.5;           // 最適射程下限（射程の50%）
+//    public double OPTIMAL_RANGE_MAX = 0.7;           // 最適射程上限（射程の70%）
+//    public double DANGER_RANGE = 0.3;                // 危険距離（射程の30%以内）
     
     // ========================================
     // 行動コスト
     // ========================================
-    public int MOVE_COST = 1;                        // 移動1マスのコスト
-    public int ATTACK_COST = 4;                      // 攻撃のコスト
-    public int REPAIR_COST_PER_TURN = 8;             // 修理コスト最大値（残行動力に比例して修理）
+//    public int MOVE_COST = 1;                        // 移動1マスのコスト
+//    public int ATTACK_COST = 4;                      // 攻撃のコスト
+//    public int REPAIR_COST_PER_TURN = 8;             // 修理コスト最大値（残行動力に比例して修理）
 }
