@@ -46,8 +46,8 @@ public abstract class Tank {
         this.x = x;
         this.y = y;
         this.angle = 0;
-        this.ammo = 50;
-        this.maxAmmo =50;
+        this.ammo = 1000;
+        this.maxAmmo =1000;
         this.isAlive = true;
         this.activePoint = MAX_ACT;
         this.jinei = jinei;	

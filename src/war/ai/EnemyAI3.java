@@ -25,7 +25,7 @@ public class EnemyAI3 {
     // 定数（戦術パラメータ）
     // ======================================================================
 
-	AIConfig aiConfig;
+	private final AIConfig aiConfig;
 	
 	
 	/** グリッドの最大座標（端の判定に使用） */
@@ -119,7 +119,13 @@ public class EnemyAI3 {
         
         double z = self.distance(target)/self.getRange();
 ;
-        
+        //debub用
+
+
+		  
+
+
+
 		String ret = "ETC0";
 
     	if (z < aiConfig.THREAT_ZONE_1) {

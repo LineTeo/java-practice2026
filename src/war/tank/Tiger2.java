@@ -34,17 +34,17 @@ public class Tiger2 extends Tank{
     	case 0:
     		return 0.5;
 		case 1:
-			return 0.6;
-		case 2:
-			return 0.6;
-		case 3:
-			return 0.7;
-		case 4:
 			return 0.8;
+		case 2:
+			return 1.1;
+		case 3:
+			return 1.4;
+		case 4:
+			return 1.7;
 		case 5:
-			return 1.0;
+			return 2.0;
 		case 6:
-			return 1.0;
+			return 2.0;
     	}
     	return 2.0;
 		

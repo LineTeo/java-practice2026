@@ -36,10 +36,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import war.ai.AIConfig;
 import war.ai.EnemyAI3;
 import war.control.PlayerAI;
 import war.control.PlayerController;
-import war.tank.HeavyTank;
 import war.tank.LightTank;
 import war.tank.MediumTank;
 import war.tank.Tank;
@@ -93,11 +93,12 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
      ArrayList<Tank> friendlies;
      ArrayList<Tank> enemyes;
      
+     
     // ======================================================================
     // コンストラクタ
     // ======================================================================
 
-    public TankBattleGame() {
+    public TankBattleGame(AIConfig config) {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setFocusable(true);
         addKeyListener(this);
@@ -107,11 +108,12 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         // 各コンポーネントを生成
         renderer         = new TankRenderer(GRID_SIZE, CELL_SIZE, PANEL_WIDTH);
         playerController = new PlayerController(GRID_SIZE, CELL_SIZE);
-        if (isPlayerTurn) {
-        	enemyAI2         = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PLAYER);
-        } else {
-        	enemyAI2         = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PC);
-        }
+
+//        if (isPlayerTurn) {
+//        	enemyAI2         = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PLAYER);
+//        } else {
+        	enemyAI2         = new EnemyAI3(GRID_SIZE - 1,EnemyAI3.Side.PC,config);
+//        }
         playerAI         = new PlayerAI(GRID_SIZE - 1);  
 
         tanks = new ArrayList<>();
@@ -131,9 +133,10 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     private void startGame() {
         tanks.clear();
         tanks.add(new Tiger2("タイガー",      FREND_SIDE,  3,  3));
-        tanks.add(new LightTank("軽戦車", ENEMY_SIDE, 20,  3));
-        tanks.add(new HeavyTank( "重戦車", ENEMY_SIDE,  3, 20));
-        tanks.add(new MediumTank("中戦車", ENEMY_SIDE, 20, 20));
+        tanks.add(new LightTank("軽戦車", ENEMY_SIDE, 20,  20));
+        tanks.add(new MediumTank( "中戦車2", ENEMY_SIDE,  3, 20));
+//        tanks.add(new HeavyTank( "重戦車", ENEMY_SIDE,  3, 20));
+        tanks.add(new MediumTank("中戦車", ENEMY_SIDE, 20, 3));
 //        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
         selectedIndex = 0;
         
@@ -364,9 +367,29 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
     // ======================================================================
 
     public static void main(String[] args) {
+
+    	
+    	
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("戦車バトルゲーム");
-            TankBattleGame game = new TankBattleGame();
+            
+            AIConfig config;
+            TankBattleGame game;
+            config = AIConfig.fromJson("./best_ai_config.json");
+            
+            if (args.length == 1) {
+                String jsonPath = args[0];
+                // JSONからAIConfigを読み込む
+//                config = AIConfig.fromJson(jsonPath);
+                game = new TankBattleGame(config);
+            }else {
+//                config = new AIConfig();
+            	game = new TankBattleGame(config);
+            	
+            }
+
+            
+            //            TankBattleGame game = new TankBattleGame();
             frame.add(game);
             frame.pack();
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
