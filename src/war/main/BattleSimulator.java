@@ -169,9 +169,9 @@ public class BattleSimulator {
     private void initGame() {
         tanks.clear();
         tanks.add(new Tiger2("タイガー",         FREND_SIDE,  3,  3));
-        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 30,  3));
         tanks.add(new LightTank("チャフィー",  ENEMY_SIDE, 20, 20));
-        tanks.add(new MediumTank("シャーマン２号", ENEMY_SIDE, 3, 20));
+        tanks.add(new MediumTank("シャーマン１号", ENEMY_SIDE, 3, 20));
+        tanks.add(new MediumTank("シャーマン２号", ENEMY_SIDE, 20,  3));
         playerAI.setControlledTank(tanks.get(0));
     }
 
@@ -255,7 +255,7 @@ public class BattleSimulator {
 
     public static void main(String[] args) {
         // デフォルト設定でバッチ実行
-    	AIConfig config = AIConfig.fromJson("./best_ai_config.json");
+    	AIConfig config = AIConfig.fromJson("./ai_config.json");
         BattleSimulator sim = new BattleSimulator(config);
         sim.runBatch(10000, "battle_results.csv");
     }

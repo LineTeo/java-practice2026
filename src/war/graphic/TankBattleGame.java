@@ -82,7 +82,7 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
  
     /** プレイヤー操作AI ） */
     private final PlayerAI playerAI;
-    private boolean isPlayerTurn = false;    //　true でプレーヤー側hは人が操作
+    private boolean isPlayerTurn; // = true;    //　true でプレーヤー側hは人が操作
 //    private boolean isPlayerTurn = false;    //　false でプレーヤー側もコンピュータ操作
 
     
@@ -135,9 +135,9 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         tanks.add(new Tiger2("タイガー",      FREND_SIDE,  3,  3));
         tanks.add(new LightTank("軽戦車", ENEMY_SIDE, 20,  20));
         tanks.add(new MediumTank( "中戦車2", ENEMY_SIDE,  3, 20));
-//        tanks.add(new HeavyTank( "重戦車", ENEMY_SIDE,  3, 20));
         tanks.add(new MediumTank("中戦車", ENEMY_SIDE, 20, 3));
-//        tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
+//      tanks.add(new HeavyTank( "重戦車", ENEMY_SIDE,  3, 20));
+//      tanks.add(new Tiger(     "ライオン",      ENEMY_SIDE,  16,  16));
         selectedIndex = 0;
         
         
@@ -310,6 +310,8 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
         if (friends * enemies == 0) {
             String msg = (friends == 0) ? "戦車が破壊されたので負けです"
                                         : "敵を殲滅しました。勝利です!!";
+            System.out.println(msg);
+
             Object[] options = { "再プレイ", "終了" };
             int result = JOptionPane.showOptionDialog(
             	getParentFrame(), msg, "ゲーム終了",
@@ -376,16 +378,13 @@ public class TankBattleGame extends JPanel implements KeyListener, MouseListener
             AIConfig config;
             TankBattleGame game;
             config = AIConfig.fromJson("./best_ai_config.json");
+            game = new TankBattleGame(config);
             
             if (args.length == 1) {
-                String jsonPath = args[0];
-                // JSONからAIConfigを読み込む
-//                config = AIConfig.fromJson(jsonPath);
-                game = new TankBattleGame(config);
+            	//　なにか引数があればオートモード
+            	game.isPlayerTurn = false;
             }else {
-//                config = new AIConfig();
-            	game = new TankBattleGame(config);
-            	
+            	game.isPlayerTurn = true;	
             }
 
             
